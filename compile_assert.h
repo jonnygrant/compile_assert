@@ -8,13 +8,20 @@
 
 // Few other ideas, to check float range etc
 
+#ifdef __OPTIMIZE__
 #define compile_assert(condition, description) {if(condition) { _stop_compile();}}
+#else
+#define compile_assert(condition, description)
+#endif
 
 void _stop_compile() __attribute ((error("build stopped")));
 
 void * _stop_compile2(void * p) __attribute ((error("build stopped")));
 
-
+#ifdef __OPTIMIZE__
 #define compile_never_null(ptr) ptr?ptr:_stop_compile2((void*)ptr)
+#else
+#define compile_never_null(ptr) ptr
+#endif
 
 #endif
