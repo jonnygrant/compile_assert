@@ -6,10 +6,8 @@
 
 // Implemented in C, it can be used in C++ projects as well.
 
-// Few other ideas, to check float range etc
-
 #ifdef __OPTIMIZE__
-#define compile_assert(condition, description) {if(condition) { _stop_compile();}}
+#define compile_assert(condition, description) {if(!condition) { _stop_compile();}}
 #else
 #define compile_assert(condition, description)
 #endif
