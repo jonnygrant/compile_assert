@@ -8,10 +8,9 @@
 
 static void my_test(const char * p)
 {
-    compile_assert(!p, "check not null");
+    compile_assert(p, "check not null");
     printf("%s\n", p);
 }
-
 
 int main()
 {
