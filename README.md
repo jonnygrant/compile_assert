@@ -14,3 +14,6 @@ I believe a project with many C/C++ files will need to compile them all on the s
 
 I've only found a way to put the compile_assert within static functions in optimized builds, otherwise the compiler can't validate that all calling locations are truly validating their inputs passed to the checked static function at compile time.
 
+
+# future
+Add support for multiple conditions in the same compile_assert
