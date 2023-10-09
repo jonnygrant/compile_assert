@@ -1,11 +1,9 @@
 // gcc -O2 -Wall -o main3 main3.c
 
 // demonstrate compile_assert to check a percentage is valid
-//
 
 #include "compile_assert.h"
 #include <stdio.h>
-
 
 static void increase_percentage(double value, double increase_by_pc)
 {
