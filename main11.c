@@ -46,6 +46,7 @@ int main()
         }
 #endif
         compile_assert(buf[i] < buf_count_capacity, "check array bounds");
+
         // increment the count of each
         buf_count[buf[i]]++;
     }
