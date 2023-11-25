@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O3 -std=c11 -save-temps
+CFLAGS = -Wall -Wextra -O3 -std=c11
 
 TARGET = main13
 SRC_DIR = .
