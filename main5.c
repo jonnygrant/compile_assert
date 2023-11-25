@@ -1,6 +1,6 @@
 // gcc -O2 -Wall -o main5 main5.c
 
-// demonstrate compile_assert to checking all indices into an array are within bounds
+// demonstrate compile_assert checking array indirection indices into an array are within bounds
 
 #include "compile_assert.h"
 #include <stdio.h>

@@ -6,7 +6,7 @@
  * @brief Header file providing a macro for compile-time assertions in optimized builds.
  */
 
-#include <stdbool.h>
+//#include <stdbool.h>
 
 // Utilize GCC attribute error as part of an optimized build to stop when conditions
 // are not met. This is at build time, by the compiler, when it does redundant code
@@ -47,7 +47,6 @@
  * @see compile_assert
  */
 void _stop_compile() __attribute ((error("'compile_assert condition not satisfied'")));
-void * _stop_compile2(void * p) __attribute ((error("'compile_assert condition not satisfied'")));
 
 
 /**
@@ -74,7 +73,8 @@ void * _stop_compile2(void * p) __attribute ((error("'compile_assert condition n
  * @param ptr The pointer to be checked for NULL.
  * @return The pointer ptr if not NULL.
  */
-#define compile_never_null(ptr) ptr?ptr:_stop_compile2((void*)ptr)
+#define compile_never_null(ptr) ((ptr) ? (ptr) : _stop_compile())
+
 #else
 #define compile_never_null(ptr) ptr
 #endif

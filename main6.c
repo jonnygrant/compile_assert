@@ -1,6 +1,6 @@
 // gcc -O2 -Wall -o main6 main6.c
 
-// demonstrate compile_assert checking an image file is valid
+// demonstrate compile_assert checking a TGA image data file header is valid
 // the header is 18 bytes, and 4 pixels are another 16 bytes
 
 #include "compile_assert.h"

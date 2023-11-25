@@ -1,7 +1,5 @@
 // gcc -O2 -Wall -o main9 main9.c
 
-// Just an example, this isn't production code
-
 // demonstrate compile_assert checking with multiple conditions
 
 #include "compile_assert.h"
