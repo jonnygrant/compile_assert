@@ -1,13 +1,13 @@
 # compile_assert
-Demonstrate how compiler asserts can be implemented, these are evaluated at build time in an optimized build, not at runtime. This saves runtime performance. It is implemented in compile_assert.h and works well in C/C++.
+Demonstrate how compiler asserts can be implemented, these are evaluated at build time in an optimized build, not at runtime! It is implemented in compile_assert.h and works well in C/C++.
 
-There are limitations, like the need for the compiler to verify all paths to the static function, so the public API is obliged to check parameters, before passing them to the private static API.
+There are limitations, like where the compile_assert is within a function, it must be static so the compiler can verify all paths (means can't put checks within a public interface API) as the compiler needs to verify all paths to the a function, so the public API is obliged to check parameters, before passing them to the private static API. example 13 shows how to provide a checked public API, that helps by putting the API checks, all on the caller's side of the code, rather than the callee (the implemented API function).
 
-I'll write a few examples, which demonstrate how it works. NB, these examples aren't production code.
+I'll write a few examples, which demonstrate how it can work. NB, these examples aren't production code.
 
 I'm also interested to hear any other approaches that work at compile time (not simply using a static analyzer), and which don't add runtime assert() and such things.
 
-These compiler asserts draw attention to code paths that are able to pass invalid parameters by stopping the build. It's a way for an programmer to specify the constraints, the prerequisites of the function or class. When they're not 100% met the build error gives an opportunity for a programmer to address the issue.
+These compiler asserts draw attention to code paths that are able to pass invalid parameters by stopping the build. It's a way for an programmer to specify the constraints, the prerequisites of the function or class. When they're not 100% met the build error gives an opportunity for a programmer to address the issue.  Remedial action can be taken, to make the that code safer and more secure.
 
 # description of each example
 
@@ -21,7 +21,7 @@ main3.c - illustrates the use of compile_assert to validate that a given percent
 
 main4.c - demonstrates compile_assert ensuring all indices accessing an array remain within the specified bounds of the array.
 
-main5.c - demonstrate compile_assert checking array access via annother array of offset indices into that array are within bounds.
+main5.c - demonstrate compile_assert checking array access via another array of offset indices into that array are within bounds.
 
 main6.c - demonstrate compile_assert checking a TGA image data file header is valid.
 
@@ -35,10 +35,9 @@ main10.c - demonstrate compile_assert checking array ranges, based on values com
 
 main11.c - demonstrate compile_assert checking array ranges, based on values read from a file.
 
-main12. c - demonstrate compile_assert checking an offset resovled to a pointer is within the range bounds of a buffer (avoids buffer overruns) at runtime.
+main12. c - demonstrate compile_assert checking an offset resolved to a pointer is within the range bounds of a buffer (avoids buffer overruns) at runtime.
 
 main13.c - demonstrates how compile_assert can be used with multi file projects. The two files are compiled to objects, and then linked.
-
 
 # avoiding buffer overflows
 main11.c illustrates the potential for a buffer overrun when loading data from a file if the input range is not adequately validated. Buffer overruns constitute frequent triggers for cybersecurity incidents, as observed in various third-party libraries like WebP and others.
@@ -54,4 +53,5 @@ compile_assert(condition, description) where description is not logged, it is an
 
 
 # future
-Add support for multiple conditions in the same compile_assert
+Add more examples
+Try out on more large projects and codebases.

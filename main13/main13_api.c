@@ -4,7 +4,7 @@
 //
 // This is the api file
 
-void log_api(const char * const str)
+void _internal_log_api(const char * const str)
 {
     __builtin_printf("log [%s]\n", str);
 }
