@@ -53,7 +53,6 @@
 
 #ifdef __OPTIMIZE__
 
-
 /**
  * @brief Function to stop compilation with an error message if a compile_assert condition is not satisfied.
  * There is no implementation as it is only used to stop the compiler.
@@ -61,7 +60,7 @@
  */
 void _stop_compile() __attribute__ ((error("'compile_assert error detected'")));
 void * _stop_compile2() __attribute__ ((error("'compile_assert error detected'")));
-int * _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
+int _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
 
 /**
  * @def compile_assert
@@ -94,10 +93,26 @@ int * _stop_compile3() __attribute__ ((error("'compile_assert error detected'"))
 #define compile_never_null(ptr) ptr
 #endif
 
+
+#ifdef __OPTIMIZE__
+/**
+ * @def compile_assert_ptr
+ * @brief Macro to check a condition and substitute to show the pointer, or stop the compiler by calling the error function.
+ * @param condition
+ * @param ptr The pointer.
+ * @return The pointer.
+ */
+#define compile_assert_ptr(condition, ptr) ((condition) ? (ptr) : _stop_compile2())
+
+#else
+#define compile_assert_ptr(condition, ptr) ptr
+#endif
+
+
 #ifdef __OPTIMIZE__
 /**
  * @def compile_assert_scalar
- * @brief Macro to check a condition and return the scalar
+ * @brief Macro to check a condition and substitute with the scalar
  * @param condition
  * @param scalar The value.
  * @return The scalar value.
