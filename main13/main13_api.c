@@ -3,8 +3,10 @@
 // then linked
 //
 // This is the api file
+#include <stddef.h>
 
-void _internal_log_api(const char * const str)
+int _internal_log_api(const char * const str, const size_t length)
 {
-    __builtin_printf("log [%s]\n", str);
+    __builtin_printf("log [%s] %zu\n", str, length);
+    return (int)length;
 }

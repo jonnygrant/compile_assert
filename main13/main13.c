@@ -13,7 +13,7 @@ int main()
 {
     //FIXME, change to a valid string to stop the build error
     const char * str = NULL; // "A rose by any other name";
-    log_api(str);
+    int result = log_api(str, 0);
 
-    return 0;
+    return result;
 }

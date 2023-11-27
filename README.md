@@ -81,7 +81,7 @@ UBSAN: array-index-out-of-bounds in ~/app/src/app.c:4000
 index 4 is out of range of type 'SUP [1]'
 ```
 
-main10 checks index before accessing the array, and shows as follows:
+main10 checks index before accessing the array, and reports as follows:
 
 ```
 main10.c:23:9: note: in expansion of macro ‘compile_assert’
@@ -94,16 +94,18 @@ compile_assert can only detect those conditions the programmer asserts at compil
 compile_assert is useful for infosec, cyber security, cyber-resilience, safety critical software validation and functional safety.
 
 There are plenty of standards:
+
 ISO 26262 Automotive Functional Safety.
 ISO 27001 Information security, cybersecurity and privacy protection.
-ISO 29147 Information technology Security techniques
-ISO 30111 Information technology Security techniques Vulnerability handling processes
+ISO 29147 Information technology Security techniques.
+ISO 30111 Information technology Security techniques Vulnerability handling processes.
 
 compile_assert is about increasing security and stability to an acceptable level.
 
 
 # future
-Add more examples
+Add more examples.
+
 Try out on more large projects and codebases.
 
 There are cases where a compiler's optimizer has "compiled out" some needed code, compile_assert could be put in, to validate that the check was retained eg a NULL pointer check.

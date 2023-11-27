@@ -60,7 +60,8 @@
  * @see compile_assert
  */
 void _stop_compile() __attribute__ ((error("'compile_assert error detected'")));
-
+void * _stop_compile2() __attribute__ ((error("'compile_assert error detected'")));
+int * _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
 
 /**
  * @def compile_assert
@@ -87,10 +88,24 @@ void _stop_compile() __attribute__ ((error("'compile_assert error detected'")));
  * @param ptr The pointer to be checked for NULL.
  * @return The pointer ptr if not NULL.
  */
-#define compile_never_null(ptr) ((ptr) ? (ptr) : _stop_compile())
+#define compile_never_null(ptr) ((ptr) ? (ptr) : _stop_compile2())
 
 #else
 #define compile_never_null(ptr) ptr
+#endif
+
+#ifdef __OPTIMIZE__
+/**
+ * @def compile_assert_scalar
+ * @brief Macro to check a condition and return the scalar
+ * @param condition
+ * @param scalar The value.
+ * @return The scalar value.
+ */
+#define compile_assert_scalar(condition, scalar) ((condition) ? (scalar) : _stop_compile3())
+
+#else
+#define compile_assert_scalar(condition, scalar) scalar
 #endif
 
 #endif

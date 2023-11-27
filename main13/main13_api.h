@@ -6,13 +6,8 @@
 #include "./../compile_assert.h"
 
 // Example public API, programmers should call the checked version log_api()
-void _internal_log_api(const char * const str);
+int _internal_log_api(const char * const str, const size_t length);
 
-#define log_api(str) \
-    do \
-    { \
-    compile_assert((str != NULL), "cannot be NULL"); \
-    _internal_log_api(str); \
-    } while (0)
+#define log_api(str, length) _internal_log_api(compile_never_null(str), length)
 
 #endif
