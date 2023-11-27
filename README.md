@@ -43,6 +43,11 @@ main13.c - demonstrates how compile_assert can be used with multi file projects.
 main11.c illustrates the potential for a buffer overrun when loading data from a file if the input range is not adequately validated. Buffer overruns constitute frequent triggers for cybersecurity incidents, as observed in various third-party libraries like WebP and others.
 
 # notes
+
+compile_assert is best at converting runtime checks, and assert() into compile time checks. Of course it can only do this where it can satisfy the conditions. It's no use trying to compile_assert the size of a file downloaded from the internet at runtime. Where used, compile_assert is very good at drawing attention to logic errors not covered by code. Now, some code covers intractable problems, so while the compiler can't compute, if the programmer has some offline proof that say an array will never be overrun by a bad index, checking the bounds of the array index check could be skipped. However, in practice these index range checks if called infrequently per second, will not be perceivable to users, and the benefits avoiding overruns will outweigh the risks of not having the checks (security vulnerabilities, like in WebP where a variable amount of compressed data was not meant to exceed the bounds of a fixed sized array when decoded).
+
+It's important to consider candidates for compile_assert(), assess if it's reasonable to make changes to satisify the issue identified. assert() is usually a good candidate to replace. Not all candiates are suitable for compile_assert().
+
 The use of compile_assert doesn't preclude the use of runtime checks, runtime input validation - after-all, software that loads a PNG image file, can't validate the header and file is appropriately sized at compile time (yet). In the future, perhaps compilers will be able to validate buffers in linker sections at compile time, or simpler might be #include "myimage_buf.h" and use compile_assert to check it at build time (there is the #embed proposal). Of course, can specify some constraints, like max image size, on the static function, and force the calling code to check those requirements.
 
 I believe a project with many C/C++ files may need to compile all the files on the same GCC command line to give it full program visibility. That could reach some memory limit.  An alternative, might be to build each module as a separate ELF executable. Then a main program could invoke it with data in a file to process, and collect the results of in another file.  For instance, a compression tool could be in a binary, separate from the UI binary.
@@ -51,7 +56,54 @@ I've only found a way to put the compile_assert within static functions in optim
 
 compile_assert(condition, description) where description is not logged, it is an easy way for a programmer to include a note explaining why there is this compile time check, they can write "" if they really don't need to explain.  It's implemented as a macro, rather than inline. If it was an inline function, the compiler error would display the file and line number as the inline function from the header.
 
+# sample output main13 library API example
+```C
+$ make
+gcc -Wall -Wextra -O3 -std=c11 -c -o main13.o main13.c
+In file included from main13.c:8:
+main13.c: In function ‘main’:
+<snip>
+main13_api.h:14:5: note: in expansion of macro ‘compile_assert’
+   14 |     compile_assert((str != NULL), "cannot be NULL"); \
+      |     ^~~~~~~~~~~~~~
+main13.c:16:5: note: in expansion of macro ‘log_api’
+   16 |     log_api(str);
+      |     ^~~~~~~
+make: *** [makefile:17: main13.o] Error 1
+```
+
+# compile_assert compared to UBSAN
+
+gcc has -fsanitize=undefined
+
+```
+UBSAN: array-index-out-of-bounds in ~/app/src/app.c:4000
+index 4 is out of range of type 'SUP [1]'
+```
+
+main10 checks index before accessing the array, and shows as follows:
+
+```
+main10.c:23:9: note: in expansion of macro ‘compile_assert’
+   23 |         compile_assert(buf[i] < buf_count_capacity, "check array bounds");
+```
+compile_assert can only detect those conditions the programmer asserts at compile time.
+
+
+# uses
+compile_assert is useful for infosec, cyber security, cyber-resilience, safety critical software validation and functional safety.
+
+There are plenty of standards:
+ISO 26262 Automotive Functional Safety.
+ISO 27001 Information security, cybersecurity and privacy protection.
+ISO 29147 Information technology Security techniques
+ISO 30111 Information technology Security techniques Vulnerability handling processes
+
+compile_assert is about increasing security and stability to an acceptable level.
+
 
 # future
 Add more examples
 Try out on more large projects and codebases.
+
+There are cases where a compiler's optimizer has "compiled out" some needed code, compile_assert could be put in, to validate that the check was retained eg a NULL pointer check.

@@ -53,12 +53,13 @@
 
 #ifdef __OPTIMIZE__
 
+
 /**
  * @brief Function to stop compilation with an error message if a compile_assert condition is not satisfied.
  * There is no implementation as it is only used to stop the compiler.
  * @see compile_assert
  */
-void _stop_compile() __attribute ((error("'compile_assert condition not satisfied'")));
+void _stop_compile() __attribute__ ((error("'compile_assert error detected'")));
 
 
 /**
