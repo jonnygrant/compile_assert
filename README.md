@@ -15,7 +15,7 @@ These are example issues that compile_assert() detects, giving the programmer op
 
 main.c - showcases a compile_assert within a static function, compelling the calling code to verify the validity of arguments before calling.
 
-main2.c - demonstrates compile_never_null, enabling the calling code to validate pointer arguments prior to passing, resulting in a compile error pinpointing the issue at main2.c:22, providing clearer location for programmers to identify and mitigate the cause.
+main2.c - demonstrates compile_assert_never_null, enabling the calling code to validate pointer arguments prior to passing, resulting in a compile error pinpointing the issue at main2.c:22, providing clearer location for programmers to identify and mitigate the cause.
 
 main3.c - illustrates the use of compile_assert to validate that a given percentage falls within the acceptable range of 0 to 100%.
 
@@ -55,6 +55,8 @@ I believe a project with many C/C++ files may need to compile all the files on t
 I've only found a way to put the compile_assert within static functions in optimized builds, otherwise the compiler can't validate that all calling locations are truly validating their inputs passed to the checked static function at compile time.
 
 compile_assert(condition, description) where description is not logged, it is an easy way for a programmer to include a note explaining why there is this compile time check, they can write "" if they really don't need to explain.  It's implemented as a macro, rather than inline. If it was an inline function, the compiler error would display the file and line number as the inline function from the header.
+
+Sometimes, there might be some small changes needed, to make a suitable place to call compile_assert().
 
 # sample output main13 library API example
 ```C
@@ -99,6 +101,8 @@ ISO 26262 Automotive Functional Safety.
 ISO 27001 Information security, cybersecurity and privacy protection.
 ISO 29147 Information technology Security techniques.
 ISO 30111 Information technology Security techniques Vulnerability handling processes.
+
+Secure Software Development Framework SSDF https://csrc.nist.gov/Projects/ssdf
 
 compile_assert is about increasing security and stability to an acceptable level.
 

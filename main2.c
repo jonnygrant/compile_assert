@@ -1,6 +1,6 @@
 // gcc -O2 -Wall -Wno-nonnull -o main2 main2.c
 
-// demonstrate compile_never_null
+// demonstrate compile_assert_never_null
 
 #include "compile_assert.h"
 #include <stdio.h>
@@ -19,6 +19,6 @@ int main()
     // The following line, is the pogrammer fix in this little example, of course in a real application a diagnosis should be done to see how this could occur.
     //if(NULL != ptr)
     {
-        my_test(compile_never_null(ptr));
+        my_test(compile_assert_never_null(ptr));
     }
 }

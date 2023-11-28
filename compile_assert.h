@@ -82,22 +82,23 @@ int _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
 
 #ifdef __OPTIMIZE__
 /**
- * @def compile_never_null
+ * @def compile_assert_never_null
  * @brief Macro to ensure a pointer is never NULL in optimized builds.
  * @param ptr The pointer to be checked for NULL.
  * @return The pointer ptr if not NULL.
  */
-#define compile_never_null(ptr) ((ptr) ? (ptr) : _stop_compile2())
+#define compile_assert_never_null(ptr) ((ptr) ? (ptr) : _stop_compile2())
 
 #else
-#define compile_never_null(ptr) ptr
+#define compile_assert_never_null(ptr) ptr
 #endif
 
 
 #ifdef __OPTIMIZE__
 /**
  * @def compile_assert_ptr
- * @brief Macro to check a condition and substitute to show the pointer, or stop the compiler by calling the error function.
+ * @brief Macro to check a condition and show the pointer, or stop the
+ * compiler by calling the error function in optimized builds.
  * @param condition
  * @param ptr The pointer.
  * @return The pointer.
@@ -112,7 +113,7 @@ int _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
 #ifdef __OPTIMIZE__
 /**
  * @def compile_assert_scalar
- * @brief Macro to check a condition and substitute with the scalar
+ * @brief Macro to check a condition and substitute with the scalar in an optimized build.
  * @param condition
  * @param scalar The value.
  * @return The scalar value.
