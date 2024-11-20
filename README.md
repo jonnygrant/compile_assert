@@ -1,10 +1,10 @@
 # Who needs Rust? compile_assert works with GCC and Clang today!
 Memory Safety @ Compile time! Not Runtime
 
-This works in standard GGC and Clang, no changes needed.
+This works in standard GCC and Clang, no changes needed.
 
 I always love the high performance nature of C and C++ programming, these languages have served me well in my career.
-With such a lot of existing code in C an and C++ out there, there are a lot of bugs and memory vunerabilities that haven't been discovered. Currently there are mostly only *runtime* checks for these bugs, which means we need to soak test, and core dump at runtime before anyone will know the bug exists.  I wanted something different, something better, something at *compile time*
+With such a lot of existing code in C an and C++ out there, there are a lot of bugs and memory vulnerabilities that haven't been discovered. Currently there are mostly only *runtime* checks for these bugs, which means we need to soak test, and core dump at runtime before anyone will know the bug exists.  I wanted something different, something better, something at *compile time*
 
 Demonstrate how compiler asserts can be implemented, these are evaluated at build time in an optimized build, not at runtime! It is implemented in compile_assert.h and works well in C/C++.
 
@@ -53,6 +53,10 @@ main11.c - demonstrate compile_assert checking array ranges, based on values rea
 main12. c - demonstrate compile_assert checking an offset resolved to a pointer is within the range bounds of a buffer (avoids buffer overruns) at runtime.
 
 main13.c - demonstrates how compile_assert can be used with multi file projects. The two files are compiled to objects, and then linked.
+
+main14.cpp - WIP
+
+main15.c - WIP
 
 # avoiding buffer overflows
 main11.c illustrates the potential for a buffer overrun when loading data from a file if the input range is not adequately validated. Buffer overruns constitute frequent triggers for cybersecurity incidents, as observed in various third-party libraries like WebP and others.
