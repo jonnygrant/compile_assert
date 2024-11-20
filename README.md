@@ -1,5 +1,14 @@
-# compile_assert
+# Who needs Rust? compile_assert works with GCC and Clang today!
+Memory Safety @ Compile time! Not Runtime
+
+This works in standard GGC and Clang, no changes needed.
+
+I always love the high performance nature of C and C++ programming, these languages have served me well in my career.
+With such a lot of existing code in C an and C++ out there, there are a lot of bugs and memory vunerabilities that haven't been discovered. Currently there are mostly only *runtime* checks for these bugs, which means we need to soak test, and core dump at runtime before anyone will know the bug exists.  I wanted something different, something better, something at *compile time*
+
 Demonstrate how compiler asserts can be implemented, these are evaluated at build time in an optimized build, not at runtime! It is implemented in compile_assert.h and works well in C/C++.
+
+compile_assert() is intended to identify risks, to draw attention to those potential vunerabilities, so remedial action can be taken during the development, before regular unit testing, integration testing and fuzzing.
 
 There are limitations, like where the compile_assert is within a function, it must be static so the compiler can verify all paths (means can't put checks within a public interface API) as the compiler needs to verify all paths to the a function, so the public API is obliged to check parameters, before passing them to the private static API. example 13 shows how to provide a checked public API, that helps by putting the API checks, all on the caller's side of the code, rather than the callee (the implemented API function).
 
@@ -8,6 +17,12 @@ I'll write a few examples, which demonstrate how it can work. NB, these examples
 I'm also interested to hear any other approaches that work at compile time (not simply using a static analyzer), and which don't add runtime assert() and such things.
 
 These compiler asserts draw attention to code paths that are able to pass invalid parameters by stopping the build. It's a way for an programmer to specify the constraints, the prerequisites of the function or class. When they're not 100% met the build error gives an opportunity for a programmer to address the issue.  Remedial action can be taken, to make the that code safer and more secure.
+
+compile_assert() is like a better version of static_assert(), because it takes into account known control flow. It works without complete knowledge, just the knowledge it has. That might mean an occasional extra branch condition check - measurement benchmarking would reveal the frequency of the calls and any performance impact. Of course stability in a safety critical system is more important than the 'cost' of an if() condition.
+
+Where control flow isn't know, say that malloc() returns a valid pointer, it obliges programmer to act
+
+
 
 # description of each example
 
