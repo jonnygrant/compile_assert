@@ -1,11 +1,12 @@
-Document number: PnnnnR0
+Document number: P4021R0
 Date: 2026-02-22
 Audience: EWGI, EWG
 Project: ISO Programming Language C++
 Reply-to: Jonathan Grant jg@jguk.org
 
 Abstract
-compile_assert provides advanced asserts at compile time, not runtime. Used for bounds checking, parameter validation, data validation at compile time.
+Following the recent std-proposals discussion of my 2023 compile_assert(), this paper introduces compile_assert(expression, message), a new C++ keyword for enforcing assertions at compile time within ordinary (non-constexpr) functions.
+compile_assert provides advanced asserts at compile time, not runtime. Used for bounds checking, parameter validation and data validation at compile time. The example implementation does this by using GCC’s attribute error.
 
 main4.c:15:9: note: in expansion of macro ‘compile_assert’
  15 | compile_assert(i < buf_size, "check buf index within buffer bounds");
@@ -48,10 +49,10 @@ The feature is not intended to replace runtime validation. It is intended to pre
 
 There is an implementation with examples listed in the references section.
 
-While there is no compiler supporting this feature directly, since 2023 I have used the following approach:
+While there is no compiler supporting this feature directly, in 2023 I created the following compile_assert macro:
 
 #if defined(__OPTIMIZE__) && defined(__ENABLE_COMPILE_ASSERT__)
-
+#define COMPILE_ASSERT_ACTIVE 1
 void _stop_compile() __attribute__ ((error("'compile_assert error detected'")));
 
 /**
@@ -69,11 +70,20 @@ void _stop_compile() __attribute__ ((error("'compile_assert error detected'")));
 
 #else
 #define compile_assert(condition, description)
+#define COMPILE_ASSERT_ACTIVE 0
 #endif
 
-When standardised, I suggest naming _Compile_Assert() furthermore a macro to
-#define _Compile_Assert compile_assert
-This way, a user can #undef compile_assert
+Compilers that do not support GCC’s error attribute could stop the compilation of the translation unit another way, eg inline assembler of an instruction that does not exist, eg asm(“stop_build”); this also works on GCC.
+
+
+#define compile_assert(expression, message) \
+    do { \
+        if (!(expression)) { \
+            asm("stopbuild"); \
+        } \
+    } while (0)
+
+I could not find a way to get MSVC to stop the build.
 
 3. Design Goals and Non-Goals
 
@@ -184,16 +194,17 @@ Contracts express runtime checks, compile_assert() is enforced at compile-time.
 
 7. Implementation Experience
 
+A header-only implementation demonstrates this behaviour by placing an ill-formed construct in a branch that the optimizer determines to be reachable. The end goal is for compile_assert to be a keyword like static_assert is.
+
 Requires user source code or build to enable
 #define __ENABLE_COMPILE_ASSERT__ 1
 GCC sets __OPTIMIZE__
-Without these, the macros compile out. Makes it straightforward for anyone with an older compiler or wishing to not use compile_assert.
+Without these, the macros compile out.
+It sets COMPILE_ASSERT_ACTIVE
 
 A user who receives a file within which they wish to disable compile_assert could also
 #undef compile_assert
 #define compile_assert(expression, message)
-
-A header-only implementation demonstrates this behaviour by placing an ill-formed construct in a branch that the optimizer determines to be reachable.
 
 This technique depends on:
 The compiler diagnosing invalid constructs in reachable code,
@@ -293,6 +304,9 @@ make: *** [makefile:17: main13.o] Error 1
 10. Notes
 
 Static analysis tools can also check the constraints specified by each compile_assert  keyword.
+
+
+
 
 10. Acknowledgements
 
