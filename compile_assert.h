@@ -2,7 +2,7 @@
 #define COMPILE_ASSERT_H
 
 /**
- * Copyright 2023 Jonny Grant <jg@jguk.org>
+ * Copyright 2023, 2024, 2025, 2026 Jonny Grant <jg@jguk.org>
 
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -51,7 +51,14 @@
  * output.
  */
 
-#ifdef __OPTIMIZE__
+
+#ifdef __GNUC__
+#if defined(__OPTIMIZE__) && defined(__ENABLE_COMPILE_ASSERT__)
+#define GCC_COMPILE_ASSERT
+#endif
+#endif
+
+#ifdef GCC_COMPILE_ASSERT
 
 /**
  * @brief Function to stop compilation with an error message if a compile_assert condition is not satisfied.
@@ -59,8 +66,8 @@
  * @see compile_assert
  */
 void _stop_compile() __attribute__ ((error("'compile_assert error detected'")));
-void * _stop_compile2() __attribute__ ((error("'compile_assert error detected'")));
-int _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
+void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error detected'")));
+int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detected'")));
 
 /**
  * @def compile_assert
@@ -80,7 +87,7 @@ int _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
 #endif
 
 
-#ifdef __OPTIMIZE__
+#ifdef GCC_COMPILE_ASSERT
 /**
  * @def compile_assert_never_null
  * @brief Macro to ensure a pointer is never NULL in optimized builds.
@@ -94,7 +101,7 @@ int _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
 #endif
 
 
-#ifdef __OPTIMIZE__
+#ifdef GCC_COMPILE_ASSERT
 /**
  * @def compile_assert_ptr
  * @brief Macro to check a condition and show the pointer, or stop the
@@ -106,11 +113,11 @@ int _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
 #define compile_assert_ptr(condition, ptr) ((condition) ? (ptr) : _stop_compile2())
 
 #else
-#define compile_assert_ptr(condition, ptr) ptr
+
 #endif
 
 
-#ifdef __OPTIMIZE__
+#ifdef GCC_COMPILE_ASSERT
 /**
  * @def compile_assert_scalar
  * @brief Macro to check a condition and substitute with the scalar in an optimized build.
@@ -124,4 +131,4 @@ int _stop_compile3() __attribute__ ((error("'compile_assert error detected'")));
 #define compile_assert_scalar(condition, scalar) scalar
 #endif
 
-#endif
+#endif // COMPILE_ASSERT_H
