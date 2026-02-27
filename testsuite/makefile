@@ -22,10 +22,6 @@ LOG := > /dev/null 2>&1
 #LOG :=
 #LOG := >> testsuite.log 2>&1
 
-.PHONY: clean
-
-clean:
-	rm -f *.bin
 
 all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main24_a main24_b
 
@@ -164,3 +160,7 @@ main24_b:
 	else \
 		echo "main24_b: *FAIL*"; \
 	fi
+
+
+clean:
+	rm -f *.bin
