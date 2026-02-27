@@ -1,4 +1,4 @@
-// g++ -O2 -Wall -o main7 main7.cpp
+// g++ -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main7 main7.cpp
 
 // Try compile_assert with a C++ STL container std::string
 // Note: C++ and STL faces issues, this example has some strange interoperation, the 2nd always fails, unless the 1st is commented out

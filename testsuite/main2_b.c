@@ -1,4 +1,4 @@
-// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -Wno-nonnull -o main2 main2.c
+// gcc -O2 -Wall -Wno-nonnull -o main2_b.bin main2.c
 
 // demonstrate compile_assert_never_null
 
@@ -17,7 +17,7 @@ int main()
     if(rand() != 10) ptr = NULL;
 
     // The following line, is the pogrammer fix in this little example, of course in a real application a diagnosis should be done to see how this could occur.
-    //if(NULL != ptr)
+    if(NULL != ptr)
     {
         my_test(compile_assert_never_null(ptr));
     }

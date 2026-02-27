@@ -1,4 +1,4 @@
-// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main3 main3.c
+// gcc -O2 -Wall -o main3 main3.c
 
 // demonstrate compile_assert to check a percentage is valid
 

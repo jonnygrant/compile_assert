@@ -1,4 +1,4 @@
-// gcc -O2 -Wall -o main11 main11.c
+// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main11 main11.c
 
 // demonstrate compile_assert checking array ranges, based on values read from a file
 

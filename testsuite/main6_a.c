@@ -1,4 +1,4 @@
-// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main6 main6.c
+// gcc -O2 -Wall -o main6 main6.c
 
 // demonstrate compile_assert checking a TGA image data file header is valid
 // the header is 18 bytes, and 4 pixels are another 16 bytes

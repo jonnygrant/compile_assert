@@ -48,17 +48,19 @@ main9.c - demonstrate compile_assert checking with multiple conditions.
 
 main10.c - demonstrate compile_assert checking array ranges, based on values computed at runtime.
 
-main11.c - demonstrate compile_assert checking array ranges, based on values read from a file.
+main11.c - demonstrate compile_assert checking array ranges,  based on values read from a file to avoid a buffer overflow.
 
 main12. c - demonstrate compile_assert checking an offset resolved to a pointer is within the range bounds of a buffer (avoids buffer overruns) at runtime.
 
 main13.c - demonstrates how compile_assert can be used with multi file projects. The two files are compiled to objects, and then linked.
 
-main14.cpp - WIP
+main14.cpp - demonstrates how compile_assert checks argv is not nullptr
 
-main15.c - WIP
+main15.c - demonstrates how compile_assert requires a pointer in a struct to be valid
 
-main16.cpp - demonstrates a C++ templated container never_null_ptr that stubornly refuses to be constructed with a nullptr
+main16.cpp - demonstrates a C++ templated container never_null_ptr that stubbornly refuses to be constructed with a nullptr
+
+main17.cpp - demonstrate divide by zero caught by compile_assert.
 
 # avoiding buffer overflows
 main11.c illustrates the potential for a buffer overrun when loading data from a file if the input range is not adequately validated. Buffer overruns constitute frequent triggers for cybersecurity incidents, as observed in various third-party libraries like WebP and others.

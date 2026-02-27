@@ -51,12 +51,12 @@
  * output.
  */
 
-
 #ifdef __GNUC__
 #if defined(__OPTIMIZE__) && defined(__ENABLE_COMPILE_ASSERT__)
 #define GCC_COMPILE_ASSERT
-#endif
-#endif
+#define COMPILE_ASSERT_ACTIVE
+#endif // defined(__OPTIMIZE__) && defined(__ENABLE_COMPILE_ASSERT__)
+#endif // __GNU__
 
 #ifdef GCC_COMPILE_ASSERT
 
@@ -65,29 +65,31 @@
  * There is no implementation as it is only used to stop the compiler.
  * @see compile_assert
  */
-void _stop_compile() __attribute__ ((error("'compile_assert error detected'")));
-void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error detected'")));
-int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detected'")));
 
 /**
  * @def compile_assert
  * @brief Macro for compile-time assertion in optimized builds.
- * @param condition The compile-time condition to be checked.
- * @param description A description of the assertion (unused).
+ * @param expression The compile-time condition to be checked.
+ * @param message A description of the assertion (unused).
  */
-#define compile_assert(condition, description) \
+#define compile_assert(expression, message) \
     do { \
-        if (!(condition)) { \
-            _stop_compile(); \
+        void _compile_assert_fail() __attribute__ ((error(message))); \
+        if (!(expression)) { \
+            _compile_assert_fail(); \
         } \
     } while (0)
 
+#define compile_assert0(expression) compile_assert(expression, NULL)
+
 #else
 #define compile_assert(condition, description)
+#define compile_assert0(expression)
 #endif
 
 
 #ifdef GCC_COMPILE_ASSERT
+void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error detected'")));
 /**
  * @def compile_assert_never_null
  * @brief Macro to ensure a pointer is never NULL in optimized builds.
@@ -113,11 +115,12 @@ int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detecte
 #define compile_assert_ptr(condition, ptr) ((condition) ? (ptr) : _stop_compile2())
 
 #else
-
+#define compile_assert_ptr(condition, ptr)
 #endif
 
 
 #ifdef GCC_COMPILE_ASSERT
+int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detected'")));
 /**
  * @def compile_assert_scalar
  * @brief Macro to check a condition and substitute with the scalar in an optimized build.
@@ -129,6 +132,60 @@ int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detecte
 
 #else
 #define compile_assert_scalar(condition, scalar) scalar
+#endif
+
+#if defined(_MSC_VER)
+#ifndef COMPILE_FILE
+#error MSVC compile_assert requires COMPILE_FILE to be passed from makefile
+#endif // COMPILE_FILE
+
+#endif // _MSC_VER
+
+
+#if defined(_MSC_VER)
+#if defined(__ENABLE_COMPILE_ASSERT__)
+#define COMPILE_ASSERT_ACTIVE
+#define MSVC_COMPILE_ASSERT
+/* Requires makefile to pass the filename as a macro: cl /DCOMPILE_FILE=__FILE_msvc18_cpp_
+ * The preprocessor merges the three macros as a missing function call.
+ * the failure shows as eg _compile_assert__FILE_msvc18_cpp_23(void)
+ */
+#define COMPILE_ASSERT_ACTIVE
+#define MERGE2(a,b) a##b
+#define MERGE1(a,b) MERGE2(a,b)
+#define MERGE3(a,b,c) MERGE1(a, MERGE1(b,c))
+
+#define compile_assert(expr, message) \
+do { \
+    if (!(expr)) { \
+      extern void MERGE3(_compile_assert, COMPILE_FILE, __LINE__)(); \
+      MERGE3(_compile_assert, COMPILE_FILE, __LINE__)(); \
+    } \
+} while (0)
+
+#define compile_assert0(expression) compile_assert(expression, NULL)
+#else
+
+#define compile_assert(condition, description)
+#define compile_assert0(expression)
+#define COMPILE_ASSERT_ACTIVE
+
+#endif // defined(__ENABLE_COMPILE_ASSERT__)
+#endif // defined(_MSC_VER)
+
+// Compile out the other variants for the moment
+#if defined(_MSC_VER)
+#define compile_assert_ptr(condition, ptr) ptr
+#define compile_assert_never_null(ptr) ptr
+#define compile_assert_scalar(condition, scalar) scalar
+#endif
+
+#ifndef compile_assert
+#error compile_assert not defined
+#endif
+
+#ifndef compile_assert0
+#error compile_assert0 not defined
 #endif
 
 #endif // COMPILE_ASSERT_H

@@ -1,4 +1,4 @@
-// gcc -O2 -Wall -o main9 main9.c
+// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main9 main9.c
 
 // demonstrate compile_assert checking with multiple conditions
 

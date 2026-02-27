@@ -1,4 +1,4 @@
-// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main6 main6.c
+// gcc -O2 -Wall -o main6 main6.c
 
 // demonstrate compile_assert checking a TGA image data file header is valid
 // the header is 18 bytes, and 4 pixels are another 16 bytes
@@ -33,8 +33,23 @@ const uint8_t tga_file[] = {
 
 int main()
 {
-    compile_assert(tga_file[2] == 0x01, "Must be truecolor"); // will fire, as must be 0x02
-    compile_assert(sizeof(tga_file) == (16+18), "must be the right size"); // will fire as must remove extra byte
+    if(tga_file[2] == 0x01)
+    {
+        printf("Error: Not truecolor TGA\n");
+        return -1;
+    }
+
+    if(sizeof(tga_file) != (16+18))
+    {
+        printf("Error: Header is the wrong size\n");
+        return -2;
+    }
+
+    // will fire, as must be 0x02
+    compile_assert(tga_file[2] == 0x01, "Must be truecolor");
+
+    // will fire as must remove extra byte
+    compile_assert(sizeof(tga_file) == (16+18), "must be the right size");
 
     printf("%d\n", tga_file[0]);
 

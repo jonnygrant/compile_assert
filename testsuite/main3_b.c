@@ -1,4 +1,4 @@
-// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main3 main3.c
+// gcc -O2 -Wall -o main3 main3.c
 
 // demonstrate compile_assert to check a percentage is valid
 
@@ -14,7 +14,7 @@ static void increase_percentage(double value, double increase_by_pc)
 int main()
 {
     double value = 50.0;
-    double increase_by_pc = 100.01;
+    double increase_by_pc = 100.0;
 
     compile_assert(increase_by_pc >= 0.0, "percentage not within 0 - 100 range");
     compile_assert(increase_by_pc <= 100.0, "percentage not within 0 - 100 range");

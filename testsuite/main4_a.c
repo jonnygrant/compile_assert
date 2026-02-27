@@ -1,8 +1,6 @@
-// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -o main4 main4.c
+// gcc -O2 -o main4 main4.c
 // gcc 13  has a handy -Warray-bounds that catches too
 // demonstrate compile_assert checking all indices into an array are within bounds
-
-#define __ENABLE_COMPILE_ASSERT__ 1
 
 #include "compile_assert.h"
 

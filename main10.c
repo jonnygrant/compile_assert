@@ -1,4 +1,4 @@
-// gcc -O2 -Wall -o main10 main10.c
+// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main10 main10.c
 
 // demonstrate compile_assert checking array ranges, based on values computed at runtime
 

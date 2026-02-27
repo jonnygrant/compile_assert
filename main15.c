@@ -1,4 +1,4 @@
-// gcc -O2 -Wall -o main15 main15.c
+// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main15 main15.c
 
 #include <string.h>
 #include <stdint.h>
@@ -23,15 +23,18 @@ struct data
 
 static void check_data(const struct data * ptr)
 {
-    //const char * d = ptr->p;
     if(NULL == ptr)
     {
         return;
     }
 
+    const char * d = ptr->p;
+
+    //if(p == NULL) return;
+
     // BUG identified, the NULL check may be optimized out,
     // this draws attention to the issues in this function
-    compile_assert((ptr != NULL), "check_data: d was NULL");
+    compile_assert((d != NULL), "check_data: d was NULL");
 
     __builtin_printf("d %p\n", ptr);
 }

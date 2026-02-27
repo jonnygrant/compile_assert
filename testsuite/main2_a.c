@@ -1,4 +1,4 @@
-// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -Wno-nonnull -o main2 main2.c
+// gcc -O2 -Wall -Wno-nonnull -o main2_a.bin main2.c
 
 // demonstrate compile_assert_never_null
 

@@ -1,4 +1,4 @@
-// gcc -O2 -Wall -o main12 main12.c
+// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main12 main12.c
 
 #include <string.h>
 #include <stdint.h>

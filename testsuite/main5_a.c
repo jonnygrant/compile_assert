@@ -1,4 +1,4 @@
-// gcc -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main5 main5.c
+// gcc -O2 -Wall -o main5 main5.c
 
 // demonstrate compile_assert checking array indirection indices into an array are within bounds
 
