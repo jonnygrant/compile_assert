@@ -22,7 +22,7 @@ LOG := > /dev/null 2>&1
 #LOG :=
 #LOG := >> testsuite.log 2>&1
 
-.PHONY clean
+.PHONY: clean
 
 clean:
 	rm -f *.bin
