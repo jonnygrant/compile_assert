@@ -11,9 +11,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
-
-
 struct data
 {
     uint32_t id;

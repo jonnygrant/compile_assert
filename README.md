@@ -62,6 +62,8 @@ main16.cpp - demonstrates a C++ templated container never_null_ptr that stubborn
 
 main17.cpp - demonstrate divide by zero caught by compile_assert.
 
+main26.cpp - demonstrate constraints with std::vector and std::array
+
 # avoiding buffer overflows
 main11.c illustrates the potential for a buffer overrun when loading data from a file if the input range is not adequately validated. Buffer overruns constitute frequent triggers for cybersecurity incidents, as observed in various third-party libraries like WebP and others.
 

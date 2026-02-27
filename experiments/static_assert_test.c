@@ -7,6 +7,8 @@
 
 #include <stddef.h>
 
+// Based on Alejandro Colomar's suggestion must_be()
+
 #define compile_assert(expression, message) \
     do { \
         if (!(expression)) { \
@@ -22,7 +24,7 @@ int main()
     const char * const buf = NULL;
 
     // change to == to let it pass
-    compile_assert(buf == NULL, "");
+    compile_assert(buf != NULL, "");
 
     return 0;
 }
