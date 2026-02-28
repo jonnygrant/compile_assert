@@ -23,7 +23,7 @@ LOG := > /dev/null 2>&1
 #LOG := >> testsuite.log 2>&1
 
 
-all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main24_a main24_b
+all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main24_a main24_b main25_a main25_b
 
 start:
 	echo "compile_assert() testsuite"
@@ -161,6 +161,24 @@ main24_b:
 		echo "main24_b: *FAIL*"; \
 	fi
 
+# should fail, cannot coptimize the max number
+main25_a:
+	$(CXX) $(INC_DIRS) $(FLAGS) -o main25_a.bin main25_a.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main25_a: *FAIL*"; \
+	else \
+		echo "main25_a: PASS"; \
+	fi
+
+
+# should compile, optimizer understands sqrt of small numbers
+main25_b:
+	$(CXX) $(INC_DIRS) $(FLAGS) -o main25_b.bin main25_b.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main25_b: PASS"; \
+	else \
+		echo "main25_b: *FAIL*"; \
+	fi
 
 clean:
 	rm -f *.bin
