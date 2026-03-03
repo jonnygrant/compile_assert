@@ -180,6 +180,24 @@ do { \
 #define compile_assert_scalar(condition, scalar) scalar
 #endif
 
+// Generic compiler support, via a missing symbol
+#if defined(__ENABLE_COMPILE_ASSERT__)
+#if !defined(compile_assert)
+#define COMPILE_ASSERT_ACTIVE
+
+#define compile_assert(expression, message) \
+    do { \
+        void _compile_assert_fail(); \
+        if (!(expression)) { \
+            _compile_assert_fail(); \
+        } \
+    } while (0)
+
+#define compile_assert0(expression) compile_assert(expression, NULL)
+#endif // !defined(compile_assert)
+#endif // defined(__ENABLE_COMPILE_ASSERT__)
+
+
 #ifndef compile_assert
 #error compile_assert not defined
 #endif
