@@ -1,16 +1,16 @@
-Document number: P4021Rx_edit
+Document number: P4021R1
 Date: 2026-02-22
 Audience: EWGI, EWG
 Project: ISO Programming Language C++
 Reply-to: Jonathan Grant jg@jguk.org
 
-compile_assert – compile time optimizer enforced conditions
+compile_assert – optimization-enforced conditions at compile time
 
 Abstract
 Following the recent std-proposals discussion of my 2023 compile_assert(), this paper introduces compile_assert(expression, message), a new C++ keyword for enforcing assertions at compile time within ordinary (non-constexpr) functions.
-compile_assert provides advanced asserts at compile time, not runtime.
+compile_assert provides advanced asserts at compile time (only in optimized builds), not runtime.
 
-It is used for bounds checking, avoiding nullptr dereference, parameter validation and data validation at compile time. All three major compilers (GCC, Clang, MSVC) are supported with a sample implementation. The GCC/Clang implementation use the a function error attribute
+It is used for bounds checking, avoiding nullptr dereference, parameter validation and data validation at compile time. It only works in Optimized enabled compilers. All three major compilers (GCC, Clang, MSVC) are supported with a sample implementation. The GCC/Clang implementation use the a function error attribute:
 
 main4.c:15:9: note: in expansion of macro ‘compile_assert’
  15 | compile_assert(i < buf_size, "check buf index within buffer bounds");
@@ -99,6 +99,7 @@ If the compiler can prove that all reachable paths satisfy the condition, the pr
 
 The compile_assert construct has no runtime effect. Where a condition is not met, the translation unit (object) will not be produced as the error is fatal.
 
+
 5. Design Rationale
 
 compile_assert() relies on the compiler's optimizer and control-flow analysis.
@@ -124,6 +125,7 @@ Keeping compile_assert separate from static_assert preserves the conceptual dist
 No interaction with costexpr, concepts, templates, modules.
 Contracts express runtime checks, compile_assert() is enforced at compile-time.
 
+
 7. Implementation Experience
 
 A header-only implementation demonstrates this behavior by placing an ill-formed construct in a branch that the optimizer determines to be reachable.
@@ -147,8 +149,6 @@ Reliance on Optimizer, which in itself is not standardized is an issue. There wi
 Programmers do not require an extra static analyzer, as the compiler’s Optimizer is deployed for static analysis. compile_assert is not active in a build with no optimization.
 
 Functions may need to be in an anonymous namespace, or static so they cannot be called from external translation units (if they can be called, and they do not check their own parameters before any compile_assert() it would still error).
-
-
 
 8. Impact on the Standard
 
@@ -238,11 +238,7 @@ MSVC alternatives
 Several alternative mechanisms exist for deliberately causing compilation or linkage failure in the presence of a violated constraint. One approach is to emit an invalid inline assembly instruction in the error path, relying on the assembler to diagnose the failure and report the corresponding source location. Another technique embeds a distinctive string in the object file and uses a post-compilation build rule (e.g. via make) to scan generated assembly or object output for that marker. A further method, commonly used in MSVC environments, is to reference a deliberately undefined external symbol in the error case, thereby triggering a link-time failure.
 
 
-
-
-
-10. Examples
-
+10. Example source
 
 Example 1:
 static void log_message(const char * p)
@@ -303,16 +299,14 @@ One approach is to enforce compile_assert(handle >= 0) on a function such as api
 
 Inside api_function(int handle), the assertion could be implemented as a call to a [[deprecated]] function when (handle<0). This would emit a warning during object generation if the failure path is instantiated. The linker could then determine whether any call to api_function() with a negative handle actually remains in the final program.
 
-It feels more rational for the programmer just to put the if(handle>=0) in api_function(int handle) as best practice, the optimizer could then eliminate redundant checks. I may validate parameters multiple times, the compiler will remove unnecessary checks.
+It feels more rational for the programmer just to put the if(handle>=0) in api_function(int handle) as best practice, the Optimizer could then eliminate redundant checks. A programmer may validate parameters multiple times, the compiler’s Optimizer may remove redundant checks, so there is no extra runtime cost and guarantees safety.
 
-This combines early diagnostics with whole-program validation, though it depends on optimization and symbol elimination behavior.
-
-However, its correctness depends on optimization behavior and symbol elimination rules, which may vary across compilers and with LTO features.
+This combines early diagnostics with whole-program validation, though it depends on optimization and symbol elimination behavior, which may vary across compilers and those with LTO features.
 
 
+11. Sample examples and tests
 
-11. Examples
-The reference link shows various examples have been incorporated in the repository testsuite folder. It supports Clang and GCC, just type $ make
+The reference link shows various examples have been incorporated in the repository, and specifically there is a testsuite folder which outputs PASS or FAIL for tests which supports Clang and GCC, just type $ make
 
 main.c Argument validation within a static function
 
@@ -340,8 +334,7 @@ main13.c - demonstrates how compile_assert can be used with multi file projects.
 
 main17.cpp - demonstrate divide by zero caught by compile_assert.
 
-
-Example output
+Example output:
 
 In file included from main4.c:5:
 main4.c: In function ‘main’:
@@ -371,10 +364,13 @@ main13.c:16:5: note: in expansion of macro ‘log_api’
       |     ^~~~~~~
 make: *** [makefile:17: main13.o] Error 1
 
+
+
 Adjacent string literals can be concatenated, so can even write:
 compile_assert(condition, "main1_a check not null in: " __FILE__);
 
 error: call to ‘_compile_assert_fail’ declared with attribute error: main1_a check not null in: main1_a.c
+
 
 12. Compilers supported
 
@@ -387,18 +383,20 @@ Static analysis tools can also check the constraints specified by each compile_a
 
 compile_assert() isn't suited for everything. It doesn't always "drop in" to replace assert() and other required runtime checks. It’s there to be used by a systems architect to spec out APIs and functions, specifying the constraints for the programmer’s implementation to satisfy.
 
+
 15. Alternative keyword name instead of compile_assert
 
 Feedback has been there may be a better name than compile_assert. When I considered, I looked at existing keywords. I know static_assert is at compile time, and consteval is always at compile time, constexpr is sometimes at compile time, here are some alternative suggestions:
 
 enforce()
-require(),
+require()
 guarantee()
 verify()
 compiler_assert()
 optimizer_assert()
 condition_assert()
 consteval_assert()
+const_assert()
 const_constraint()
 eval_constraint()
 require_const()
@@ -407,6 +405,7 @@ unreachable_assert()
 expr_constraint()
 invariant_assert()
 condition_check()
+
 
 
 
@@ -423,7 +422,7 @@ There are other builtin functions in GCC, some may achieve the a similar result,
 
 I provide examples that show how invalid asm() can be used, as this is only checked after the compiler has Optimized out redundant code paths.
 
-I researched using compile_assert together with __builtin_constant_p to determine if the expression was constant; however, the results were not reliable.
+I researched using compile_assert together with __builtin_constant_p to determine if the expression was constant; however, the results were not reliable. Likewise __builtin_choose_expr requires a constant expression so cannot be used. None of the old static assert style macros work (invalid enums, arrays with negative values), because they are all evaluated before the Optimizer has removed the failure cases that were validated.
 
 Calling an external error function that does not exist causes the linker to output the file and line location of the compile_assert constraint failure. This is the method used with MSVC.
 
@@ -452,7 +451,6 @@ Lambda functions don’t provide a workable approach either, as the compiler eva
 
 std::unreachable was introduced in C++23, compilers do not verify control flow never reaches that point. If control flow does reach that point, behavior is undefined.
 
-
 In safety-critical systems, deliberately removing certain symbols, eg. realloc, to ensure that any unintended use is detected at link time, thereby establishing a hard enforcement boundary within the toolchain rather than relying on code review or external static analysis. The MSVC implementation of compile_assert() follows a similar principle by placing a call to a deliberately undefined symbol from the exact code location that should be unreachable, causing a link-time failure if the compiler cannot eliminate that path. The same approach could be applied with an extern to set a missing variable.
 
 
@@ -466,9 +464,11 @@ For safety-critical systems such as an x-ray machine or avionics software, these
 
 ALGOL 68 introduced null references, and implementations allowed the checks to be disabled at compile time (the inventor Sir Tony Hoare calls it his “billion-dollar mistake”. Pascal also has nil pointers.
 
+
 17. Additional compiler implementations
 
 Straightforward to add support for additional compilers. Either use the MSVC style approach of calling a missing function _compile_assert_fail, linker then reports on constraint failure. Call asm("invalid instruction"),  or use [[deprecated]].
+
 
 17. Acknowledgments
 
@@ -492,6 +492,7 @@ https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-T
 GSL not_null proposal (at compile time) https://github.com/isocpp/CppCoreGuidelines/issues/2071
 
 19. External resources
+
 ISO 26262 Automotive Functional Safety.
 ISO 27001 Information security, cybersecurity and privacy protection.
 ISO 29147 Information technology Security techniques.
@@ -511,7 +512,7 @@ d) Added "Runtime vs compile-time constraints" section
 e) Tests added that verify constraints before and after fixes at compile time. https://github.com/jonnygrant/compile_assert/tree/main/testsuite
 
 
-
-21. Version history
+21. Revision history
 
 2026-02-22: R0
+2026-02-28: R1
