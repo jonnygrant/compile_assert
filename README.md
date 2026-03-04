@@ -62,10 +62,19 @@ main16.cpp - demonstrates a C++ templated container never_null_ptr that stubborn
 
 main17.cpp - demonstrate divide by zero caught by compile_assert.
 
+test_20 - demonstrate with noinline the constant propagation stops, and the compiler cannot prove
+
+main24 - sqrt
+
+main25 - C++ style contracts, at compile time, pre(), contract_assert() and post() bank_account class
+
 main26.cpp - demonstrate constraints with std::vector and std::array
 
-main28_a.cpp - demonstrate using compile_assert to show C++ Contracts at compile time
+test_27 - std::array bounds check
 
+main28_a.cpp - demonstrate using compile_assert to show C++ Contracts at compile time Number class
+
+test_29 - demonstates LTO with 2 C files
 
 # avoiding buffer overflows
 main11.c illustrates the potential for a buffer overrun when loading data from a file if the input range is not adequately validated. Buffer overruns constitute frequent triggers for cybersecurity incidents, as observed in various third-party libraries like WebP and others.
