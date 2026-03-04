@@ -17,13 +17,13 @@ INC_DIRS := -I..
 
 FLAGS := $(INC_DIRS) -D__ENABLE_COMPILE_ASSERT__ -O2
 
-# Stop compiler outputting text, then only the return code is checked.
+# Stop compiler outputting text, then only the return code is checked
 LOG := > /dev/null 2>&1
 #LOG :=
 #LOG := >> testsuite.log 2>&1
 
 
-all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main24_a main24_b main25_a main25_b
+all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main17_a main17_b main24_a main24_b main25_a main25_b main28_a main28_b main29_a main29_b
 
 start:
 	echo "compile_assert() testsuite"
@@ -142,17 +142,34 @@ main6_b:
 		echo "main6_b: *FAIL*"; \
 	fi
 
-# should fail, cannot coptimize the max number
+# should fail
+main17_a:
+	$(CXX) $(INC_DIRS) $(FLAGS) -o main17_a.bin main17_a.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main17_a: *FAIL*"; \
+	else \
+		echo "main17_a: PASS"; \
+	fi
+
+# should compile
+main17_b:
+	$(CXX) $(INC_DIRS) $(FLAGS) -o main17_b.bin main17_b.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main17_b: PASS"; \
+	else \
+		echo "main17_b: *FAIL*"; \
+	fi
+
+# should fail
 main24_a:
 	$(CXX) $(INC_DIRS) $(FLAGS) -o main24_a.bin main24_a.cpp $(LOG); \
 	if [ $$? -eq 0 ]; then \
-		echo "main24_a: *FAIL*"; \
+		echo "main25_a: *FAIL*"; \
 	else \
-		echo "main24_a: PASS"; \
+		echo "main25_a: PASS"; \
 	fi
 
-
-# should compile, optimizer understands sqrt of small numbers
+# should compile
 main24_b:
 	$(CXX) $(INC_DIRS) $(FLAGS) -o main24_b.bin main24_b.cpp $(LOG); \
 	if [ $$? -eq 0 ]; then \
@@ -161,7 +178,7 @@ main24_b:
 		echo "main24_b: *FAIL*"; \
 	fi
 
-# should fail, cannot coptimize the max number
+# should fail
 main25_a:
 	$(CXX) $(INC_DIRS) $(FLAGS) -o main25_a.bin main25_a.cpp $(LOG); \
 	if [ $$? -eq 0 ]; then \
@@ -171,7 +188,7 @@ main25_a:
 	fi
 
 
-# should compile, optimizer understands sqrt of small numbers
+# should compile
 main25_b:
 	$(CXX) $(INC_DIRS) $(FLAGS) -o main25_b.bin main25_b.cpp $(LOG); \
 	if [ $$? -eq 0 ]; then \
@@ -179,6 +196,88 @@ main25_b:
 	else \
 		echo "main25_b: *FAIL*"; \
 	fi
+
+
+# should fail
+main26_a:
+	$(CXX) $(INC_DIRS) $(FLAGS) -o main26_a.bin main26_a.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main26_a: *FAIL*"; \
+	else \
+		echo "main26_a: PASS"; \
+	fi
+
+
+# should compile
+main26_b:
+	$(CXX) $(INC_DIRS) $(FLAGS) -o main26_b.bin main26_b.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main26_b: PASS"; \
+	else \
+		echo "main26_b: *FAIL*"; \
+	fi
+
+# should fail
+main27_a:
+	$(CXX) $(INC_DIRS) $(FLAGS) -o main27_a.bin main27_a.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main27_a: *FAIL*"; \
+	else \
+		echo "main27_a: PASS"; \
+	fi
+
+
+# should compile
+main27_b:
+	$(CXX) $(INC_DIRS) $(FLAGS) -o main27_b.bin main27_b.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main27_b: PASS"; \
+	else \
+		echo "main27_b: *FAIL*"; \
+	fi
+
+# should fail
+main28_a:
+	$(CXX) $(INC_DIRS) $(FLAGS) -std=c++23 -o main28_a.bin main28_a.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main28_a: *FAIL*"; \
+	else \
+		echo "main28_a: PASS"; \
+	fi
+
+
+# should compile
+main28_b:
+	$(CXX) $(INC_DIRS) $(FLAGS) -std=c++23 -o main28_b.bin main28_b.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main28_b: PASS"; \
+	else \
+		echo "main28_b: *FAIL*"; \
+	fi
+
+# should fail
+main29_a:
+	$(CC) $(INC_DIRS) $(FLAGS) -flto -c -o test_29_lto1_a.o test_29_lto1_a.c $(LOG)
+	$(CC) $(INC_DIRS) $(FLAGS) -flto -c -o test_29_lto2_a.o test_29_lto2_a.c $(LOG)
+	$(CC) -DLINKMSG $(INC_DIRS) $(FLAGS) -flto -o test_29_lto_a.bin test_29_lto1_a.o test_29_lto2_a.o $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main29_a: *FAIL*"; \
+	else \
+		echo "main29_a: PASS"; \
+	fi
+
+
+# should compile
+main29_b:
+	$(CC) $(INC_DIRS) $(FLAGS) -flto -c -o test_29_lto1_b.o test_29_lto1_b.c $(LOG)
+	$(CC) $(INC_DIRS) $(FLAGS) -flto -c -o test_29_lto2_b.o test_29_lto2_b.c $(LOG)
+	$(CC) -DLINKMSG $(INC_DIRS) $(FLAGS) -flto -o test_29_lto_b.bin test_29_lto1_b.o test_29_lto2_b.o $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "main29_b: PASS"; \
+	else \
+		echo "main29_b: *FAIL*"; \
+	fi
+
 
 clean:
 	rm -f *.bin
