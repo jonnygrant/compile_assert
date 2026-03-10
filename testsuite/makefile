@@ -20,10 +20,11 @@ FLAGS := $(INC_DIRS) -D__ENABLE_COMPILE_ASSERT__ -O2
 # Stop compiler outputting text, then only the return code is checked
 LOG := > /dev/null 2>&1
 #LOG :=
+
 #LOG := >> testsuite.log 2>&1
 
 
-all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main17_a main17_b test_20_a main24_a main24_b main25_a main25_b main28_a main28_b main29_a main29_b
+all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main17_a main17_b test_20_a main24_a main24_b main25_a main25_b main28_a main28_b main29_a main29_b test_30_web_a test_30_web_b
 
 start:
 	echo "compile_assert() testsuite"
@@ -285,6 +286,25 @@ main29_b:
 		echo "main29_b: PASS"; \
 	else \
 		echo "main29_b: *FAIL*"; \
+	fi
+
+# should fail
+test_30_web_a:
+	$(CXX) $(INC_DIRS) $(FLAGS) -std=c++23 -o test_30_web_a.bin test_30_web_a.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "test_30_web_a: *FAIL*"; \
+	else \
+		echo "test_30_web_a: PASS"; \
+	fi
+
+
+# should compile
+test_30_web_b:
+	$(CXX) $(INC_DIRS) $(FLAGS) -std=c++23 -o test_30_web_b.bin test_30_web_b.cpp $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "test_30_web_b: PASS"; \
+	else \
+		echo "test_30_web_b: *FAIL*"; \
 	fi
 
 
