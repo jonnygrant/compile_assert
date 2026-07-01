@@ -2,24 +2,15 @@
 #define COMPILE_ASSERT_H
 
 /**
- * Copyright 2023, 2024, 2025, 2026 Jonny Grant <jg@jguk.org>
+ * Copyright 2023 - 2026 Jonathan Grant <jg@jguk.org>
 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution.
- * Neither the name of the copyright holder nor the names of its contributors may be
- * used to endorse or promote products derived from this software without specific
- * prior written permission.
+ * Distributed under the Boost Software License, Version 1.0.
+ * https://www.boost.org/LICENSE_1_0.txt
 */
 
 /**
  * @file compile_assert.h
- * @brief Header file providing a macro for compile-time assertions in optimized builds.
+ * @brief Header file providing a macro for compile-time assertions builds.
  */
 
 // Utilize GCC attribute error as part of an optimized build to stop when conditions
@@ -35,7 +26,7 @@
 
 
 /**
- * @brief Utilize GCC attribute error as part of an optimized build to stop when conditions
+ * @brief Utilize GCC attribute error to stop when conditions
  * are not met. This is at build time, by the compiler, when it does redundant code
  * removal, aka dead code removal.
  *
@@ -68,9 +59,9 @@
 
 /**
  * @def compile_assert
- * @brief Macro for compile-time assertion in optimized builds.
+ * @brief Macro for compile-time assertions.
  * @param expression The compile-time condition to be checked.
- * @param message A description of the assertion (unused).
+ * @param message A description of the assertion.
  */
 #define compile_assert(expression, message) \
     do { \
@@ -79,6 +70,18 @@
             _compile_assert_fail(); \
         } \
     } while (0)
+
+
+#define compile_assert_const_p(expression, message) \
+    do { \
+        if(__builtin_constant_p(expression)) { \
+            if (!(expression)) { \
+                void _compile_assert_fail() __attribute__ ((error(message))); \
+                _compile_assert_fail(); \
+            } \
+        } \
+    } while (0)
+
 
 #define compile_assert0(expression) compile_assert(expression, NULL)
 
@@ -92,7 +95,7 @@
 void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error detected'")));
 /**
  * @def compile_assert_never_null
- * @brief Macro to ensure a pointer is never NULL in optimized builds.
+ * @brief Macro to ensure a pointer is never NULL.
  * @param ptr The pointer to be checked for NULL.
  * @return The pointer ptr if not NULL.
  */
@@ -134,11 +137,17 @@ int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detecte
 #define compile_assert_scalar(condition, scalar) scalar
 #endif
 
+// make lack of COMPILE_FILE a hard error
+//#if defined(_MSC_VER)
+//#ifndef COMPILE_FILE
+//#error MSVC compile_assert requires COMPILE_FILE to be passed from makefile
+//#endif // COMPILE_FILE
+//#endif // _MSC_VER
+
 #if defined(_MSC_VER)
 #ifndef COMPILE_FILE
-#error MSVC compile_assert requires COMPILE_FILE to be passed from makefile
+#define COMPILE_FILE filename_not_set
 #endif // COMPILE_FILE
-
 #endif // _MSC_VER
 
 
