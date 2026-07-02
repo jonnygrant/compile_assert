@@ -88,6 +88,7 @@
 #else
 #define compile_assert(condition, description)
 #define compile_assert0(expression)
+#define compile_assert_const_p(expression, message)
 #endif
 
 
