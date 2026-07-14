@@ -64,27 +64,32 @@
  * @see compile_assert
  */
 
+// The failure function carries the error message via the error attribute.
+// Its name is made unique per expansion with __COUNTER__
+#define CA_CAT2(a, b) a##b
+#define CA_CAT(a, b) CA_CAT2(a, b)
+
 /**
  * @def compile_assert
  * @brief Macro for compile-time assertions.
  * @param expression The compile-time condition to be checked.
  * @param message A description of the assertion.
  */
-#define compile_assert(expression, message) \
+#define CA_ASSERT_IMPL(expression, message, fn) \
     do { \
-        void _compile_assert_fail() __attribute__ ((error(message))); \
+        void fn() __attribute__ ((error(message))); \
         if (!(expression)) { \
-            _compile_assert_fail(); \
+            fn(); \
         } \
     } while (0)
+#define compile_assert(expression, message) \
+    CA_ASSERT_IMPL(expression, message, CA_CAT(_compile_assert_fail_, __COUNTER__))
 
 
-#define compile_assert_const_p(expression, message) \
-    do { \
-        if(__builtin_constant_p(expression)) { \
-            if (!(expression)) { \
-                void _compile_assert_fail() __attribute__ ((error(message))); \
-                _compile_assert_fail(); \
+// compile_assert_const_p turns a provably-constant precondition violation into a build error.
+// The optional trailing arguments name the operands that must be compile-time constants for the
+// check to fire; with none given, the condition itself is the guarded operand:
+//
             } \
         } \
     } while (0)
