@@ -138,7 +138,7 @@ It defines COMPILE_ASSERT_ACTIVE which an application can check.
 
 A user who receives a file within which they wish to disable compile_assert could also
 #undef compile_assert
-#define compile_assert(expression, message)
+#define compile_assert(...)
 
 GCC and Clang both support __attribute__ ((error(message))), GCC since gcc-4.5.3 in 2011. The attribute is not standardized. They do both support [[gnu:error(message)]] which can also be used.
 
@@ -191,22 +191,24 @@ While there is no compiler supporting this feature directly, I created the follo
  * @def compile_assert
  * @brief Macro for compile-time assertion in optimized builds.
  * @param expression The compile-time condition to be checked.
- * @param message A description of the assertion (unused).
+ * @param message Optional description of the assertion (unused); defaults to "".
  */
-#define compile_assert(expression, message) \
+// compile_assert(expr) or compile_assert(expr, "message"); the message is optional.
+// CA_FIRST yields the expression, CA_MSG the message (defaulting to "").
+#define CA_FIRST(first, ...) first
+#define CA_MSG(...) CA_MSG_(__VA_ARGS__, "")
+#define CA_MSG_(expression, message, ...) message
+
+#define compile_assert(...) \
     do { \
-        void _compile_assert_fail() __attribute__ ((error(message))); \
-        if (!(expression)) { \
+        void _compile_assert_fail() __attribute__ ((error(CA_MSG(__VA_ARGS__)))); \
+        if (!(CA_FIRST(__VA_ARGS__))) { \
             _compile_assert_fail(); \
         } \
     } while (0)
 
-// NB, would rather pass NULL to this.
-#define compile_assert0(expression) compile_assert(expression, "")
-
 #else
-#define compile_assert(condition, description)
-#define compile_assert0(expression)
+#define compile_assert(...)
 #endif
 
 Compilers that do not support GCC’s error attribute could stop the compilation of the translation unit another way, eg inline assembler of an instruction that does not exist, eg asm(“stop_build”); this also works on GCC.
@@ -219,9 +221,9 @@ C:\dev\> cl /DCOMPILE_FILE=__FILE_msvc18_cpp_
 #define MERGE1(a,b) MERGE2(a,b)
 #define MERGE3(a,b,c) MERGE1(a, MERGE1(b,c))
 
-#define compile_assert(expr, message) \
+#define compile_assert(...) \
 do { \
-    if (!(expr)) { \
+    if (!(CA_FIRST(__VA_ARGS__))) { \
       extern void MERGE3(_compile_assert, COMPILE_FILE, __LINE__)(); \
       MERGE3(_compile_assert, COMPILE_FILE, __LINE__)(); \
     } \
@@ -352,17 +354,28 @@ proposal.c:9:5: note: in expansion of macro ‘compile_assert’
       |     ^~~~~~~~~~~~~~
 
 $ make
-gcc -Wall -Wextra -O3 -std=c11 -c -o main13.o main13.c
+gcc -Wall -Wextra -O3 -std=c11 -D__ENABLE_COMPILE_ASSERT__ -c -o main13.o main13.c
 In file included from main13.c:8:
 main13.c: In function ‘main’:
-<snip>
-main13_api.h:14:5: note: in expansion of macro ‘compile_assert’
-   14 |     compile_assert((str != NULL), "cannot be NULL"); \
-      |     ^~~~~~~~~~~~~~
-main13.c:16:5: note: in expansion of macro ‘log_api’
-   16 |     log_api(str);
-      |     ^~~~~~~
-make: *** [makefile:17: main13.o] Error 1
+./../compile_assert.h:154:57: error: call to ‘_stop_compile2’ declared with attribute error: 'compile_assert pointer error detected'
+  154 | #define compile_assert_never_null(ptr) ((ptr) ? (ptr) : _stop_compile2())
+      |                                                         ^~~~~~~~~~~~~~~~
+main13_api.h:11:48: note: in expansion of macro ‘compile_assert_never_null’
+   11 | #define log_api(str, length) _internal_log_api(compile_assert_never_null(str), compile_assert_scalar((length != 0), length))
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~
+main13.c:18:18: note: in expansion of macro ‘log_api’
+   18 |     int result = log_api(str, 0);
+      |                  ^~~~~~~
+./../compile_assert.h:186:74: error: call to ‘_stop_compile3’ declared with attribute error: 'compile_assert_scalar error detected'
+  186 | #define compile_assert_scalar(condition, scalar) ((condition) ? (scalar) : _stop_compile3())
+      |                                                  ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+main13_api.h:11:80: note: in expansion of macro ‘compile_assert_scalar’
+   11 | #define log_api(str, length) _internal_log_api(compile_assert_never_null(str), compile_assert_scalar((length != 0), length))
+      |                                                                                ^~~~~~~~~~~~~~~~~~~~~
+main13.c:18:18: note: in expansion of macro ‘log_api’
+   18 |     int result = log_api(str, 0);
+      |                  ^~~~~~~
+make: *** [makefile:19: main13.o] Error 1
 
 
 
@@ -503,6 +516,10 @@ Secure Software Development Framework SSDF https://csrc.nist.gov/Projects/ssdf
 
 20. ChangeLog
 
+Since previous R1 (2026-02-28)
+
+a) compile_assert is now a single variadic macro: compile_assert(expression) and compile_assert(expression, message) are both accepted, the message is optional. The separate compile_assert0 has been removed.
+
 Since previous R0 (2026-02-22)
 
 a) MSVC is now a supported compiler.
@@ -516,3 +533,4 @@ e) Tests added that verify constraints before and after fixes at compile time. h
 
 2026-02-22: R0
 2026-02-28: R1
+2026-07-14: R2 (draft)
