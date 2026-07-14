@@ -24,7 +24,7 @@ LOG := > /dev/null 2>&1
 #LOG := >> testsuite.log 2>&1
 
 
-all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main17_a main17_b test_20_a main24_a main24_b main25_a main25_b main28_a main28_b main29_a main29_b test_30_web_a test_30_web_b
+all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main17_a main17_b test_20_a main24_a main24_b main25_a main25_b main28_a main28_b main29_a main29_b test_30_web_a test_30_web_b test_31_const_p_a test_31_const_p_b test_32_div_zero_a test_32_div_zero_b
 
 start:
 	echo "compile_assert() testsuite"
@@ -305,6 +305,46 @@ test_30_web_b:
 		echo "test_30_web_b: PASS"; \
 	else \
 		echo "test_30_web_b: *FAIL*"; \
+	fi
+
+
+# should *not* compile
+test_31_const_p_a:
+	$(CC) $(INC_DIRS) $(FLAGS) -o test_31_const_p_a.bin test_31_const_p_a.c $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "test_31_const_p_a: *FAIL*"; \
+	else \
+		echo "test_31_const_p_a: PASS"; \
+	fi
+
+
+# should compile
+test_31_const_p_b:
+	$(CC) $(INC_DIRS) $(FLAGS) -o test_31_const_p_b.bin test_31_const_p_b.c $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "test_31_const_p_b: PASS"; \
+	else \
+		echo "test_31_const_p_b: *FAIL*"; \
+	fi
+
+
+# should *not* compile
+test_32_div_zero_a:
+	$(CC) $(INC_DIRS) $(FLAGS) -Wno-div-by-zero -o test_32_div_zero_a.bin test_32_div_zero_a.c $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "test_32_div_zero_a: *FAIL*"; \
+	else \
+		echo "test_32_div_zero_a: PASS"; \
+	fi
+
+
+# should compile
+test_32_div_zero_b:
+	$(CC) $(INC_DIRS) $(FLAGS) -Wno-div-by-zero -o test_32_div_zero_b.bin test_32_div_zero_b.c $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "test_32_div_zero_b: PASS"; \
+	else \
+		echo "test_32_div_zero_b: *FAIL*"; \
 	fi
 
 
