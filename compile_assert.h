@@ -43,6 +43,13 @@
  */
 
 #ifdef __GNUC__
+
+// This library relies on the GCC/Clang function 'error' attribute.
+// GCC has always supported it, but Clang only supports it from version 14.
+#if defined(__ENABLE_COMPILE_ASSERT__) && !(defined(__has_attribute) && __has_attribute(error))
+#error "__ENABLE_COMPILE_ASSERT__ requires the 'error' function attribute, available on GCC and on Clang 14 or later."
+#endif
+
 #if defined(__OPTIMIZE__) && defined(__ENABLE_COMPILE_ASSERT__)
 #define GCC_COMPILE_ASSERT
 #define COMPILE_ASSERT_ACTIVE
