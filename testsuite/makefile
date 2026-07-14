@@ -55,9 +55,9 @@ main1_b:
 main2_a:
 	$(CC) $(INC_DIRS) $(FLAGS) -Wno-nonnull -o main2_a.bin main2_a.c $(LOG); \
 	if [ $$? -eq 0 ]; then \
-		echo "main1_a: *FAIL*"; \
+		echo "main2_a: *FAIL*"; \
 	else \
-		echo "main1_a: PASS"; \
+		echo "main2_a: PASS"; \
 	fi
 
 # should compile
@@ -174,9 +174,9 @@ main17_b:
 main24_a:
 	$(CXX) $(INC_DIRS) $(FLAGS) -o main24_a.bin main24_a.cpp $(LOG); \
 	if [ $$? -eq 0 ]; then \
-		echo "main25_a: *FAIL*"; \
+		echo "main24_a: *FAIL*"; \
 	else \
-		echo "main25_a: PASS"; \
+		echo "main24_a: PASS"; \
 	fi
 
 # should compile
