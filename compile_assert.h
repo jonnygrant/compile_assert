@@ -90,9 +90,47 @@
 // The optional trailing arguments name the operands that must be compile-time constants for the
 // check to fire; with none given, the condition itself is the guarded operand:
 //
+//   compile_assert_const_p(condition, message)             guard on the condition
+//   compile_assert_const_p(condition, message, a)          guard on operand a
+//   compile_assert_const_p(condition, message, a, b, ...)  guard on every listed operand (ANDed)
+//
+// GCC before 13 does not fold __builtin_constant_p when it is applied to a value derived from
+// an overflow builtin, or even to a comparison in a deep constexpr call chain, so a guard on
+// the condition is missed and the assertion never fires. Naming the raw operands (plain
+// integers, which fold on every supported GCC) makes the check fire on GCC 11 and 12 as well
+//
+// __builtin_constant_p of every listed operand, ANDed together.
+// Up to 8 arguments are currently supported
+#define CA_G1(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G2(__VA_ARGS__))
+#define CA_G2(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G3(__VA_ARGS__))
+#define CA_G3(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G4(__VA_ARGS__))
+#define CA_G4(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G5(__VA_ARGS__))
+#define CA_G5(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G6(__VA_ARGS__))
+#define CA_G6(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G7(__VA_ARGS__))
+#define CA_G7(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G8(__VA_ARGS__))
+#define CA_G8(a) __builtin_constant_p(a)
+#define CA_GUARD(...) CA_G1(__VA_ARGS__)
+
+// Pick the guard expression
+#define CA_CONST_P_GUARD_(condition, ...)  __builtin_constant_p(condition)
+#define CA_CONST_P_GUARD_1(condition, ...) CA_GUARD(__VA_ARGS__)
+#define CA_CONST_P_GUARD(condition, ...) \
+    CA_CAT(CA_CONST_P_GUARD_, __VA_OPT__(1))(condition, __VA_ARGS__)
+
+#define CA_CONST_P_IMPL(condition, message, guard, fn) \
+    do { \
+        if (guard) { \
+            if (!(condition)) { \
+                void fn() __attribute__ ((error(message))); \
+                fn(); \
             } \
         } \
     } while (0)
+#define compile_assert_const_p(condition, message, ...) \
+    CA_CONST_P_IMPL( \
+        condition, message, \
+        CA_CONST_P_GUARD(condition, __VA_ARGS__), \
+        CA_CAT(_compile_assert_fail_, __COUNTER__))
 
 
 #define compile_assert0(expression) compile_assert(expression, NULL)
@@ -100,7 +138,7 @@
 #else
 #define compile_assert(condition, description)
 #define compile_assert0(expression)
-#define compile_assert_const_p(expression, message)
+#define compile_assert_const_p(condition, message, ...)
 #endif
 
 
@@ -226,6 +264,10 @@ do { \
 
 #ifndef compile_assert0
 #error compile_assert0 not defined
+#endif
+
+#ifndef compile_assert_const_p
+#error compile_assert_const_p not defined
 #endif
 
 #endif // COMPILE_ASSERT_H
