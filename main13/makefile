@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O3 -std=c11
+CFLAGS = -Wall -Wextra -O3 -std=c11 -D__ENABLE_COMPILE_ASSERT__
 
 TARGET = main13.bin
 SRC_DIR = .
@@ -8,12 +8,7 @@ OBJ_DIR = .
 SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
-.PHONY clean
-
-
-clean:
-	rm -f *.o
-	rm -f $(TARGET)
+.PHONY: all clean
 
 all: $(TARGET)
 
