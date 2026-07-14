@@ -11,7 +11,7 @@ static void my_test(const char * p)
 {
     compile_assert(p, "main1_a check not null in: " __FILE__ ":" TOSTRING(__LINE__));
 
-    compile_assert(p[0] == 'H', "");
+    compile_assert(p[0] == 'H');
 
     printf("%s\n", p);
 }
