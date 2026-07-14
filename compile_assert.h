@@ -42,6 +42,11 @@
  * output.
  */
 
+// compile_assert() takes an optional message: compile_assert(expr) or compile_assert(expr, "why").
+#define CA_FIRST(first, ...) first
+#define CA_MSG(...) CA_MSG_(__VA_ARGS__, "")
+#define CA_MSG_(expression, message, ...) message
+
 #ifdef __GNUC__
 
 // This library relies on the GCC/Clang function 'error' attribute.
@@ -73,7 +78,7 @@
  * @def compile_assert
  * @brief Macro for compile-time assertions.
  * @param expression The compile-time condition to be checked.
- * @param message A description of the assertion.
+ * @param message Optional description of the assertion; defaults to "" when omitted.
  */
 #define CA_ASSERT_IMPL(expression, message, fn) \
     do { \
@@ -82,8 +87,8 @@
             fn(); \
         } \
     } while (0)
-#define compile_assert(expression, message) \
-    CA_ASSERT_IMPL(expression, message, CA_CAT(_compile_assert_fail_, __COUNTER__))
+#define compile_assert(...) \
+    CA_ASSERT_IMPL(CA_FIRST(__VA_ARGS__), CA_MSG(__VA_ARGS__), CA_CAT(_compile_assert_fail_, __COUNTER__))
 
 
 // compile_assert_const_p turns a provably-constant precondition violation into a build error.
@@ -132,12 +137,8 @@
         CA_CONST_P_GUARD(condition, __VA_ARGS__), \
         CA_CAT(_compile_assert_fail_, __COUNTER__))
 
-
-#define compile_assert0(expression) compile_assert(expression, NULL)
-
 #else
-#define compile_assert(condition, description)
-#define compile_assert0(expression)
+#define compile_assert(...)
 #define compile_assert_const_p(condition, message, ...)
 #endif
 
@@ -215,22 +216,18 @@ int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detecte
 #define MERGE1(a,b) MERGE2(a,b)
 #define MERGE3(a,b,c) MERGE1(a, MERGE1(b,c))
 
-// The non-active fallback above already defined these as empty
+// The non-active fallback above already defined this as empty
 #undef compile_assert
-#undef compile_assert0
-#define compile_assert(expr, message) \
+#define compile_assert(...) \
 do { \
-    if (!(expr)) { \
+    if (!(CA_FIRST(__VA_ARGS__))) { \
       extern void MERGE3(_compile_assert, COMPILE_FILE, __LINE__)(); \
       MERGE3(_compile_assert, COMPILE_FILE, __LINE__)(); \
     } \
 } while (0)
-
-#define compile_assert0(expression) compile_assert(expression, NULL)
 #else
 
-#define compile_assert(condition, description)
-#define compile_assert0(expression)
+#define compile_assert(...)
 #define COMPILE_ASSERT_ACTIVE
 
 #endif // defined(__ENABLE_COMPILE_ASSERT__)
@@ -241,25 +238,19 @@ do { \
 #if !defined(compile_assert)
 #define COMPILE_ASSERT_ACTIVE
 
-#define compile_assert(expression, message) \
+#define compile_assert(...) \
     do { \
         void _compile_assert_fail(); \
-        if (!(expression)) { \
+        if (!(CA_FIRST(__VA_ARGS__))) { \
             _compile_assert_fail(); \
         } \
     } while (0)
-
-#define compile_assert0(expression) compile_assert(expression, NULL)
 #endif // !defined(compile_assert)
 #endif // defined(__ENABLE_COMPILE_ASSERT__)
 
 
 #ifndef compile_assert
 #error compile_assert not defined
-#endif
-
-#ifndef compile_assert0
-#error compile_assert0 not defined
 #endif
 
 #ifndef compile_assert_const_p
