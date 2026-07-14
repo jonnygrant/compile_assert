@@ -169,7 +169,7 @@ void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error det
 #define compile_assert_ptr(condition, ptr) ((condition) ? (ptr) : _stop_compile2())
 
 #else
-#define compile_assert_ptr(condition, ptr)
+#define compile_assert_ptr(condition, ptr) ptr
 #endif
 
 
