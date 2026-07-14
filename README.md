@@ -96,20 +96,36 @@ compile_assert(condition, description) where description is not logged, it is an
 Sometimes, there might be some small changes needed, to make a suitable place to call compile_assert().
 
 # sample output main13 library API example
+The checked public API `log_api(str, length)` validates both arguments on the caller's side. 
+main13.c calls `log_api` with a NULL string and a zero length, so both the `compile_assert_never_null` and `compile_assert_scalar` checks fire at compile time:
+
 ```C
 $ make
-gcc -Wall -Wextra -O3 -std=c11 -c -o main13.o main13.c
+gcc -Wall -Wextra -O3 -std=c11 -D__ENABLE_COMPILE_ASSERT__ -c -o main13.o main13.c
 In file included from main13.c:8:
-main13.c: In function ‘main’:
-<snip>
-main13_api.h:14:5: note: in expansion of macro ‘compile_assert’
-   14 |     compile_assert((str != NULL), "cannot be NULL"); \
-      |     ^~~~~~~~~~~~~~
-main13.c:16:5: note: in expansion of macro ‘log_api’
-   16 |     log_api(str);
-      |     ^~~~~~~
-make: *** [makefile:17: main13.o] Error 1
+main13.c: In function 'main':
+./../compile_assert.h:159:57: error: call to '_stop_compile2' declared with attribute error: 'compile_assert pointer error detected'
+  159 | #define compile_assert_never_null(ptr) ((ptr) ? (ptr) : _stop_compile2())
+      |                                                         ^~~~~~~~~~~~~~~~
+main13_api.h:11:48: note: in expansion of macro 'compile_assert_never_null'
+   11 | #define log_api(str, length) _internal_log_api(compile_assert_never_null(str), compile_assert_scalar((length != 0), length))
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~
+main13.c:18:18: note: in expansion of macro 'log_api'
+   18 |     int result = log_api(str, 0);
+      |                  ^~~~~~~
+./../compile_assert.h:191:74: error: call to '_stop_compile3' declared with attribute error: 'compile_assert_scalar error detected'
+  191 | #define compile_assert_scalar(condition, scalar) ((condition) ? (scalar) : _stop_compile3())
+      |                                                  ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+main13_api.h:11:80: note: in expansion of macro 'compile_assert_scalar'
+   11 | #define log_api(str, length) _internal_log_api(compile_assert_never_null(str), compile_assert_scalar((length != 0), length))
+      |                                                                                ^~~~~~~~~~~~~~~~~~~~~
+main13.c:18:18: note: in expansion of macro 'log_api'
+   18 |     int result = log_api(str, 0);
+      |                  ^~~~~~~
+make: *** [main13.o] Error 1
 ```
+
+Fixing the two FIXMEs in main13.c satisfies both of the checks.
 
 # compile_assert compared to UBSAN
 
