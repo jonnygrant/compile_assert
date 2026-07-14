@@ -215,6 +215,9 @@ int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detecte
 #define MERGE1(a,b) MERGE2(a,b)
 #define MERGE3(a,b,c) MERGE1(a, MERGE1(b,c))
 
+// The non-active fallback above already defined these as empty
+#undef compile_assert
+#undef compile_assert0
 #define compile_assert(expr, message) \
 do { \
     if (!(expr)) { \
@@ -232,13 +235,6 @@ do { \
 
 #endif // defined(__ENABLE_COMPILE_ASSERT__)
 #endif // defined(_MSC_VER)
-
-// Compile out the other variants for the moment
-#if defined(_MSC_VER)
-#define compile_assert_ptr(condition, ptr) ptr
-#define compile_assert_never_null(ptr) ptr
-#define compile_assert_scalar(condition, scalar) scalar
-#endif
 
 // Generic compiler support, via a missing symbol
 #if defined(__ENABLE_COMPILE_ASSERT__)
