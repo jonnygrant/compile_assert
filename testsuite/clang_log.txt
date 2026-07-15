@@ -1,0 +1,28 @@
+compile_assert() testsuite
+C Compiler  : clang
+C++ Compiler: clang++
+main1_a: PASS
+main1_b: PASS
+main1_a: PASS
+main2_b: PASS
+main3_a: PASS
+main3_b: PASS
+main4_a: PASS
+main4_b: PASS
+main5_a: PASS
+main5_b: PASS
+main6_a: PASS
+main6_b: PASS
+main17_a: PASS
+main17_b: PASS
+test_20_a: PASS
+main25_a: PASS
+main24_b: *FAIL*
+main25_a: PASS
+main25_b: PASS
+main28_a: PASS
+main28_b: PASS
+main29_a: PASS
+main29_b: PASS
+test_30_web_a: PASS
+test_30_web_b: PASS
