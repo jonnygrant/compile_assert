@@ -9,5 +9,6 @@ extern void f_lto(int a);
 
 int main()
 {
-  f_lto(1);
+  f_lto(2);
+  return 2;
 }

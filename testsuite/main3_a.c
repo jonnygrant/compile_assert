@@ -7,7 +7,7 @@
 
 static void increase_percentage(double value, double increase_by_pc)
 {
-    double value2 = value /100.0 * (1.0 + increase_by_pc);
+    double value2 = value / 100.0 * (1.0 + increase_by_pc);
     printf("%f\n", value2);
 }
 
@@ -17,7 +17,7 @@ int main()
     double increase_by_pc = 100.01;
 
     compile_assert(increase_by_pc >= 0.0, "percentage not within 0 - 100 range");
-    compile_assert(increase_by_pc <= 100.0, "percentage not within 0 - 100 range");
+    compile_assert(increase_by_pc <= 100.00, "percentage not within 0 - 100 range");
 
     increase_percentage(value, increase_by_pc);
 }

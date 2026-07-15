@@ -1,4 +1,4 @@
-// gcc -I.. -D__ENABLE_COMPILE_ASSERT__ -O2 -Wno-nonnull -o main1_a.bin main1_a.c
+// gcc -std=c2x -I.. -D__ENABLE_COMPILE_ASSERT__ -O2 -Wno-nonnull -o main1_a.bin main1_a.c
 
 #include "compile_assert.h"
 #include <stdio.h>
@@ -11,6 +11,7 @@ static void my_test(const char * p)
 {
     compile_assert(p, "main1_a check not null in: " __FILE__ ":" TOSTRING(__LINE__));
 
+    // The fix is to change to 'h'
     compile_assert(p[0] == 'H');
 
     printf("%s\n", p);
@@ -20,12 +21,15 @@ static void my_test(const char * p)
 int main()
 {
     const char * ptr = "hello";
-    if(rand() != 10) ptr = NULL;
+    //if(rand() != 10) ptr = NULL;
+
+    const int * ptr_to_null = nullptr;
+    compile_assert(ptr_to_null);
 
     // The following line, is the programmer fix in this little example,
     // of course in a real application a diagnosis should be done to
     // see why this bug is here!
-    //if(NULL != ptr)
+    if(NULL != ptr)
     {
         my_test(ptr);
     }

@@ -6,9 +6,9 @@
 
 #include "float_container.hpp"
 
-void ownership2(float_container value2)
+void ownership2(float_container & value2)
 {
     // fail to compile
-    // comment out, and see warning disapears
+    // comment out, and see error disapears
     __builtin_printf("%6.2f\n", *value2.get());
 }

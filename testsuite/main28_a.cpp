@@ -1,4 +1,4 @@
-// g++ -I.. -D__ENABLE_COMPILE_ASSERT__ -std=c++23 -O2 -Wall -o contracts_percentage contracts_percentage.cpp
+// g++ -I.. -D__ENABLE_COMPILE_ASSERT__ -std=c++23 -O2 -Wall -o main28_a.bin main28_a.cpp
 
 #include <iostream>
 #include <format>
@@ -9,8 +9,15 @@
 #define contract_assert compile_assert
 #define post compile_assert
 
+// Example of compile-time C++26 Contracts.
+// Acknowledgement to P2900 authors for describing C++ Contracts
+// Nothing checked at runtime.
 
-/* Demonstrate C++ style Contracts using compile_assert */
+/* Demonstrate C++ style Contracts using compile_assert
+ Could even put these checks on the in a declaration in an hpp file, or put
+ pre methods in light-weight methods in the declaration, and the main implementation
+ in cpp file here.
+ */
 class Number
 {
 public:
@@ -67,12 +74,17 @@ int main()
     double increase = 100.0;
 
     n.increase_by(increase);
+    compile_assert(n.value() > 0.0, "value must be 0.0 or above");
     std::cout << std::format("Increase was: {}, new value: {}\n", increase, n.value());
 
     n.decrease_by(20.0);
+    compile_assert(n.value() > 0.0, "value must be 0.0 or above");
+
     std::cout << std::format("Decrease was: {}, new value: {}\n", increase, n.value());
 
     n.decrease_by(180.0);
+    compile_assert(n.value() > 0.0, "value must be 0.0 or above");
+
     std::cout << std::format("Decrease was: {}, new value: {:.2f}\n", increase, n.value());
 
     return 0;

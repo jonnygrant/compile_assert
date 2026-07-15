@@ -18,7 +18,7 @@ int main()
         }
 
         // will fire, as out of bounds
-        compile_assert(i < buf_size, "check buf index within buffer bounds");
+        compile_assert(i < buf_size, "check index");
         buf[i] = 3;
     }
 }

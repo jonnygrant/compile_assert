@@ -9,8 +9,15 @@
 #define contract_assert compile_assert
 #define post compile_assert
 
+// Example of compile-time C++26 Contracts.
+// Acknowledgement to P2900 authors for describing C++ Contracts
+// Nothing checked at runtime.
 
-/* Demonstrate C++ style Contracts using compile_assert */
+/* Demonstrate C++ style Contracts using compile_assert
+ Could even put these checks on the in a declaration in an hpp file, or put
+ pre methods in light-weight methods in the declaration, and the main implementation
+ in cpp file here.
+ */
 class Number
 {
 public:

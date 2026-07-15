@@ -1,6 +1,8 @@
 // g++ -I.. -D__ENABLE_COMPILE_ASSERT__ -Wall -O3 -o main25_a_2.bin main25_a_2.cpp
 
-// Compile with a C++26-capable compiler that supports Contracts.
+// Example of compile-time C++26 Contracts.
+// Acknowledgement to P2900 authors for describing C++ Contracts
+// Nothing checked at runtime.
 
 #include <iostream>
 #include <stdexcept>

@@ -7,50 +7,46 @@ class float_container
 {
 public:
     float_container()
-        : m_valid(false), m_value(nullptr)
+        : m_value_ptr(nullptr)
     {
     }
 
     ~float_container()
     {
-        if(m_valid)
-        {
-            delete m_value;
-        }
+        delete m_value_ptr;
     }
 
     float_container(float_container& other)
-        : m_valid(false), m_value(nullptr)
+        : m_value_ptr(nullptr)
     {
         if (this != &other)
         {
-            m_value = other.m_value;
-            m_valid = true;
-            other.m_value = nullptr;
-            other.m_valid = false;
+            __builtin_printf("(float_container& other) taking ownership of m_value_ptr\n");
+
+            m_value_ptr = other.m_value_ptr;
+            other.m_value_ptr = nullptr;
         }
     }
 
+    float_container(const float_container&) = delete;
     float_container& operator=(const float_container&) = delete;
 
     float_container(float_container&& other) noexcept
-        : m_value(other.m_value)
+        :  m_value_ptr(other.m_value_ptr)
     {
-        other.m_value = nullptr;
-        other.m_valid = false;
+        __builtin_printf("float_container(float_container&& other) taking ownership of m_value_ptr\n");
+        other.m_value_ptr = nullptr;
     }
 
-    // Steal on assignment.
-    float_container& operator=(float_container& other)
+    // Take ownership
+    float_container& operator=(float_container&& other)
     {
         if (this != &other)
         {
-            delete m_value;
+            delete m_value_ptr;
 
-            m_value = other.m_value;
-            m_valid = true;
-            other.m_value = nullptr;
-            other.m_valid = false;
+            m_value_ptr = other.m_value_ptr;
+            other.m_value_ptr = nullptr;
         }
 
         return *this;
@@ -59,28 +55,22 @@ public:
     // Allocate a new float.
     void set(float value)
     {
-        if (!m_value)
-            m_value = new float;
+        if (!m_value_ptr)
+        {
+            m_value_ptr = new float;
+        }
 
-        *m_value = value;
-        m_valid = true;
-    }
-
-    const float* operator->() const
-    {
-        compile_assert(m_valid, "error get m_valid");
-        return m_value;
+        *m_value_ptr = value;
     }
 
     const float* get() const
     {
-        compile_assert(m_valid, "error get m_valid");
-        return m_value;
+        compile_assert(m_value_ptr, "error const float* get() const get m_value_ptr nullptr");
+        return m_value_ptr;
     }
 
 private:
-    bool m_valid;
-    float* m_value;
+    float* m_value_ptr;
 };
 
 #endif

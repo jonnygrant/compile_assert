@@ -13,6 +13,10 @@ int main()
 {
     //FIXME, change to a valid string to stop the build error
     const char * str = NULL; // "A rose by any other name";
+    size_t length = 0; // too small
+
+    compile_assert(NULL != str, "err NULL");
+    compile_assert(0 != length, "err too small");
 
     // FIXME 0 is too small, so increase this
     int result = log_api(str, 0);

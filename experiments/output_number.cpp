@@ -10,6 +10,10 @@ void output()
     temp<V> p;
 }
 
-int main() {
-    output<37>();
+int main()
+{
+    output<"sizeof(int)">();
+    output<sizeof(int)>();
+    output<"sizeof(double)">();
+    output<sizeof(double)>();
 }

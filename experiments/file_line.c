@@ -4,6 +4,12 @@
 
 /*
  * // actual output
+ *
+./compile_assert.h:79:13: error: call to ‘_compile_assert_fail’ declared with attribute error: file test: file_line.c:16
+   79 |             _compile_assert_fail(); \
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+file_line.c:16:5: note: in expansion of macro ‘compile_assert’
+   16 |     compile_assert(0, "file test: " FILE_AND_LINE);
 
 */
 

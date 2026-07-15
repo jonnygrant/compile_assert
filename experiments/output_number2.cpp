@@ -5,5 +5,5 @@ template<int V>
 
 int main()
 {
-    report_value<37>();
+    report_value<sizeof(int)>();
 }

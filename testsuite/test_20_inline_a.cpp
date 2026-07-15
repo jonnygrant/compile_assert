@@ -1,10 +1,12 @@
-// g++ -I.. -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o main20_a.bin main20_a.cpp
+// g++ -I.. -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -o test_20_inline_a.bin test_20_inline_a.cpp
+
+// demonstate that with [[gnu::noinline]] the constant propagation stops, and the compiler cannot prove
 
 #include <iostream>
 
 #include "compile_assert.h"
 
-//[[gnu::noinline]]
+[[gnu::noinline]]
 int get_index() { return 10; }
 
 int main()

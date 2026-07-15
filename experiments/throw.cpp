@@ -8,6 +8,8 @@
 #include <iostream>
 #include "compile_assert.h"
 
+#include <vector>
+
 /*
  * // actual output
 throw.cpp:29:5: note: in expansion of macro ‘compile_assert’
@@ -21,11 +23,12 @@ int main()
 
     try
     {
-        throw std::runtime_error("oops");;
+        std::vector<int> vec;
+        std::cout << vec.at(0);
     }
-    catch (const std::exception& e)
+    catch (const std::out_of_range & e)
     {
-        std::cout << "runtime exception: " << e.what() << "\n";
+        std::cout << "received out_of_range exception: " << e.what() << "\n";
         throw_caught = true;
     }
     catch (...)

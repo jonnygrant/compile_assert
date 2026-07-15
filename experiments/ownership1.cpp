@@ -6,7 +6,8 @@
 
 #include "float_container.hpp"
 
-extern void ownership2(float_container value2);
+// Example only works by copying and passing a reference
+extern void ownership2(float_container & value2);
 
 int main()
 {
@@ -16,8 +17,10 @@ int main()
     value.set(3.14f);
     __builtin_printf("%6.2f\n", *value.get());
 
+    float_container value2(value);
+    //value2 = value;
     // Takes ownership of the allocation
-    ownership2(value);
+    ownership2(value2);
 
     // fail to compile
     // comment out, and see warning disapears

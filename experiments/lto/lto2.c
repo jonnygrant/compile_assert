@@ -3,7 +3,7 @@
 
 void f_lto(int a)
 {
-  if(a == 2) return;
+  //if(a == 2) return;
 
   compile_assert(a != 2, "");
 
