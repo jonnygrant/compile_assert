@@ -3,7 +3,9 @@
 
 /**
  * Copyright 2023 - 2026 Jonathan Grant <jg@jguk.org>
-
+ *
+ * Distributed under the LICENSE.txt included in the release.
+ *
  * Distributed under the Boost Software License, Version 1.0.
  * https://www.boost.org/LICENSE_1_0.txt
 */
@@ -21,8 +23,6 @@
 //
 // compile_assert() is kept as a macro so GCC shows the line it's invoked as in
 // any asserts that fire. (If changed to inline, GCC shows the inline function code instead)
-//
-// Note this relies upon an optimized compiler build, in -O0 builds, it "compiles out"
 
 
 /**
@@ -202,7 +202,6 @@ int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detecte
 #endif // COMPILE_FILE
 #endif // _MSC_VER
 
-
 #if defined(_MSC_VER)
 #if defined(__ENABLE_COMPILE_ASSERT__)
 #define COMPILE_ASSERT_ACTIVE
@@ -247,7 +246,6 @@ do { \
     } while (0)
 #endif // !defined(compile_assert)
 #endif // defined(__ENABLE_COMPILE_ASSERT__)
-
 
 #ifndef compile_assert
 #error compile_assert not defined
