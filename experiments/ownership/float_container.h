@@ -40,7 +40,7 @@ inline void float_container_set(float_container * container, float value)
 
 inline const float float_container_get(const float_container * container)
 {
-    //compile_assert(container->ptr != nullptr, "error");
+    compile_assert(container->ptr != nullptr, "error");
 
     float a = *container->ptr;
     return a;

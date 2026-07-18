@@ -14,7 +14,7 @@ int main()
     float_container_init(&value);
 
     float_container_set(&value, 3.14f);
-    __builtin_printf("%6.2f\n", float_container_get(&value));
+    __builtin_printf("after set %6.2f\n", float_container_get(&value));
 
     float_container value2;
 
