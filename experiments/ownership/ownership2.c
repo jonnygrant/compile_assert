@@ -8,5 +8,5 @@ void ownership2(float_container * value2)
 {
     // fail to compile
     // comment out, and see error disapears
-    __builtin_printf("%6.2f\n", float_container_get(value2));
+    __builtin_printf("ownership2 %6.2f\n", float_container_get(value2));
 }

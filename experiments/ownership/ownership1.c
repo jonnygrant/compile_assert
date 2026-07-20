@@ -4,8 +4,7 @@
 
 #include "float_container.h"
 
-// Example only works by copying and passing a reference
-extern void ownership2(float_container * value2);
+extern inline void ownership2(float_container * value2);
 
 int main()
 {
@@ -29,5 +28,5 @@ int main()
 
     // fail to compile
     // comment out, and see warning disapears
-    __builtin_printf("after ownership %6.2f\n", float_container_get(&value));
+    //__builtin_printf("after ownership %6.2f\n", float_container_get(&value));
 }
