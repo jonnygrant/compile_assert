@@ -3,8 +3,7 @@
 // the original object
 
 #include "float_container.h"
-
-extern inline void ownership2(float_container * value2);
+#include "ownership2.h"
 
 int main()
 {

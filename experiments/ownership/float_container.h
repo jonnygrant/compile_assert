@@ -38,9 +38,16 @@ inline void float_container_set(float_container * container, float value)
     *container->ptr = value;
 }
 
+//extern void _float_container_get__called_with_nullptr();
+
 inline const float float_container_get(const float_container * container)
 {
     compile_assert(container->ptr != nullptr, "error");
+
+    //if(nullptr == container->ptr)
+    //{
+    //    _float_container_get__called_with_nullptr();
+    //}
 
     float a = *container->ptr;
     return a;
