@@ -25,7 +25,7 @@ int main()
     // Takes ownership of the allocation
     ownership2(&value2);
 
-    // fail to compile
+    // fail to compile as the ownership is already handed over
     // comment out, and see warning disapears
-    //__builtin_printf("after ownership %6.2f\n", float_container_get(&value));
+    __builtin_printf("after ownership %6.2f\n", float_container_get(&value));
 }

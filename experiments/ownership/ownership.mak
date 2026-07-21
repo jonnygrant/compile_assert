@@ -1,7 +1,16 @@
-all: start
+all: single
 
-start:
-	gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -std=c2x -ftrack-macro-expansion=0 -Wall -O2 -c -o ownership1.o ownership1.c
-	gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -std=c2x -ftrack-macro-expansion=0 -Wall -O2 -c -o ownership2.o ownership2.c
-	#gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -std=c2x -ftrack-macro-expansion=0 -Wall -O2 -c -o float_container.o float_container.c
-	gcc -o ownership.bin ownership1.o ownership2.o
+single:
+	echo "all compiled together with LTO"
+	gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -ftrack-macro-expansion=0 -std=c2x -Wall -O3 -flto -o ownership.bin ownership1.c ownership2.c
+
+ownership:
+	echo "ownership - separate files with LTO"
+	gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -ftrack-macro-expansion=0 -std=c2x -Wall -O3 -flto -c -o ownership1.lto ownership1.c
+	gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -ftrack-macro-expansion=0 -std=c2x -Wall -O3 -flto -c -o ownership2.lto ownership2.c
+	gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -ftrack-macro-expansion=0 -std=c2x -Wall -O3 -flto -o ownership.bin ownership1.lto ownership2.lto
+
+clean:
+	rm -f *.lto
+	rm -f *.bin
+	rm -f *.o
