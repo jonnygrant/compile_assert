@@ -127,6 +127,16 @@ make: *** [main13.o] Error 1
 
 Fixing the two FIXMEs in main13.c satisfies both of the checks.
 
+# avoid macro expansion in output
+gcc lets us use:
+ -ftrack-macro-expansion=0
+
+```
+test_30_web_a.cpp: In function ‘int main()’:
+test_30_web_a.cpp:27:5: error: call to ‘_compile_assert_fail_0’ declared with attribute error: only two values
+   27 |     compile_assert(result == 0 || result == 1, "only two values");
+```
+
 # compile_assert compared to UBSAN
 
 gcc has -fsanitize=undefined
