@@ -6,6 +6,10 @@ single:
 	echo "all compiled together with LTO"
 	gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -ftrack-macro-expansion=0 -std=c2x -Wall $(OPTIMIZE) -flto -o ownership.bin bogus.c ownership1.c ownership2.c
 
+no_lto:
+	echo "No LTO"
+	gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -ftrack-macro-expansion=0 -std=c2x -Wall $(OPTIMIZE) -o ownership.bin bogus.c ownership1.c ownership2.c
+
 ownership:
 	echo "ownership - separate files with LTO"
 	gcc -I../.. -D__ENABLE_COMPILE_ASSERT__ -ftrack-macro-expansion=0 -std=c2x -Wall $(OPTIMIZE) -flto -c -o ownership1.lto ownership1.c
