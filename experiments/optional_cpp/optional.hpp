@@ -26,7 +26,7 @@ public:
     constexpr T& operator*() const
     {
         // Prevents dereferencing nullptr
-        compile_assert(m_ptr != nullptr, "Error cannot return);
+        compile_assert(m_ptr != nullptr, "Error cannot dereference a nullptr");
         return *m_ptr;
     }
 
