@@ -1,4 +1,7 @@
 // g++ -O2 -I../.. -D__ENABLE_COMPILE_ASSERT__ -ftrack-macro-expansion=0 -std=c++23 -Wall -O3 -o optional.bin main.cpp
+
+// This example demonstrates compile-time Optional, like how std::optional manages an optional contained pointer value.
+
 #include "compile_assert.h"
 
 #include "optional.hpp"

@@ -20,10 +20,10 @@ int main()
 
     float_container_init(&value2);
 
-    // COMMENT comment this in, and then ownership is transfered so call to ownership2() will not fail
+    // COMMENT comment this in, and then ownership is transferred so call to ownership2() will not fail
     //float_container_ownership(&value2, &value);
 
-    // check the ownership was transfered
+    // check the ownership was transferred
     compile_assert(value.ptr == nullptr, "error nullptr");
 
     // Takes ownership of the allocation

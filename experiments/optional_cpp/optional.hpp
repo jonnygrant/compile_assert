@@ -26,7 +26,7 @@ public:
     constexpr T& operator*() const
     {
         // Prevents dereferencing nullptr
-        compile_assert(m_ptr != nullptr, "Error cannot dereference a nullptr");
+        compile_assert(m_ptr != nullptr, "Optional error: cannot access an empty Optional");
         return *m_ptr;
     }
 
