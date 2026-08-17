@@ -14,6 +14,9 @@ int main()
     // remove access to 'a'
     Forget<int> b(a);
 
+    // Allow access again
+    //a = b;
+
     int try_to_access = a;
     __builtin_printf("a again %d\n", try_to_access);
 

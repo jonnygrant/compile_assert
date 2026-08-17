@@ -59,12 +59,12 @@
 #define GCC_COMPILE_ASSERT
 #define COMPILE_ASSERT_ACTIVE
 #endif // defined(__OPTIMIZE__) && defined(__ENABLE_COMPILE_ASSERT__)
-#endif // __GNU__
+#endif // __GNUC__
 
 #ifdef GCC_COMPILE_ASSERT
 
 /**
- * @brief Function to stop compilation with an error message if a compile_assert condition is not satisfied.
+ * @brief Statement to stop compilation with an error message if a compile_assert condition is not satisfied.
  * There is no implementation as it is only used to stop the compiler.
  * @see compile_assert
  */

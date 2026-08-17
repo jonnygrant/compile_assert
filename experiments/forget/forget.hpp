@@ -1,5 +1,4 @@
 #include "compile_assert.h"
-#include "compile_assert.h"
 
 template <typename T>
 class Forget

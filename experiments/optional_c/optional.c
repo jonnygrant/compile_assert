@@ -8,12 +8,20 @@ int main()
 {
     int x = 42;
 
-    OptionalInt a = {&x};
-    OptionalInt b = {nullptr};
+    OptionalInt a = {&x, false};
+    OptionalInt b = {nullptr, false};
 
+    // COMMENT Will fail unless check has_value
     __builtin_printf("Optional a %d\n", *OptionalInt_get(a));
 
-    if(OptionalInt_has_value(b))
+    if(OptionalInt_has_value(&a))
+    {
+        __builtin_printf("has_value %d\n", a._checked);
+
+        __builtin_printf("Optional a check2 %d\n", *OptionalInt_get(a));
+    }
+
+    if(OptionalInt_has_value(&b))
     {
         __builtin_printf("Optional b is valid\n");
         __builtin_printf("b = %d\n", *OptionalInt_get(b));
