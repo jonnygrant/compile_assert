@@ -50,3 +50,9 @@
 # IDE
 *.idea/
 CLAUDE.md
+
+# MSVC
+.vs/
+CppProperties.json
+
+testsuite/build*
