@@ -3,7 +3,7 @@ C Compiler  : clang
 C++ Compiler: clang++
 main1_a: PASS
 main1_b: PASS
-main1_a: PASS
+main2_a: PASS
 main2_b: PASS
 main3_a: PASS
 main3_b: PASS
@@ -16,7 +16,7 @@ main6_b: PASS
 main17_a: PASS
 main17_b: PASS
 test_20_a: PASS
-main25_a: PASS
+main24_a: PASS
 main24_b: *FAIL*
 main25_a: PASS
 main25_b: PASS
@@ -26,3 +26,7 @@ main29_a: PASS
 main29_b: PASS
 test_30_web_a: PASS
 test_30_web_b: PASS
+test_31_const_p_a: PASS
+test_31_const_p_b: PASS
+test_32_div_zero_a: PASS
+test_32_div_zero_b: PASS

@@ -82,7 +82,7 @@
  */
 #define CA_ASSERT_IMPL(expression, message, fn) \
     do { \
-        void fn() __attribute__ ((error(message))); \
+        [[noreturn]] void fn() __attribute__ ((error(message))); \
         if (!(expression)) { \
             fn(); \
         } \
@@ -126,7 +126,7 @@
     do { \
         if (guard) { \
             if (!(condition)) { \
-                void fn() __attribute__ ((error(message))); \
+                [[noreturn]] void fn() __attribute__ ((error(message))); \
                 fn(); \
             } \
         } \
@@ -144,7 +144,7 @@
 
 
 #ifdef GCC_COMPILE_ASSERT
-void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error detected'")));
+[[noreturn]]  void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error detected'")));
 /**
  * @def compile_assert_never_null
  * @brief Macro to ensure a pointer is never NULL.
@@ -175,7 +175,7 @@ void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error det
 
 
 #ifdef GCC_COMPILE_ASSERT
-int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detected'")));
+[[noreturn]] int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detected'")));
 /**
  * @def compile_assert_scalar
  * @brief Macro to check a condition and substitute with the scalar in an optimized build.

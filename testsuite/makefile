@@ -6,15 +6,16 @@
 # Stop make outputing the rules as it executes
 .SILENT:
 
-CC = gcc
-#CC = clang
+#CC = gcc
+CC = clang
 
-CXX = g++
-#CXX = clang++
+#CXX = g++
+CXX = clang++
 
 INC_DIRS := -I..
 #INC_DIRS :=
 
+# clang does not support -ftrack-macro-expansion=0
 FLAGS := $(INC_DIRS) -D__ENABLE_COMPILE_ASSERT__ -O2
 
 # Stop compiler outputting text, then only the return code is checked
