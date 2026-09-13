@@ -2,7 +2,7 @@
 #define COMPILE_ASSERT_H
 
 /**
- * Copyright 2023 - 2026 Jonathan Grant <jg@jguk.org>
+ * Copyright 2023 - 2026 Jonathan Grant <jgrantonline AT gmail com>
  *
  * Distributed under the LICENSE.txt included in the release.
  *
@@ -14,16 +14,6 @@
  * @file compile_assert.h
  * @brief Header file providing a macro for compile-time assertions builds.
  */
-
-// Utilize GCC attribute error as part of an optimized build to stop when conditions
-// are not met. This is at build time, by the compiler, when it does redundant code
-// removal, aka dead code removal.
-//
-// Implemented in C, it can be used in C++ projects as well.
-//
-// compile_assert() is kept as a macro so GCC shows the line it's invoked as in
-// any asserts that fire. (If changed to inline, GCC shows the inline function code instead)
-
 
 /**
  * @brief Utilize GCC attribute error to stop when conditions
@@ -42,11 +32,6 @@
  * output.
  */
 
-// compile_assert() takes an optional message: compile_assert(expr) or compile_assert(expr, "why").
-#define CA_FIRST(first, ...) first
-#define CA_MSG(...) CA_MSG_(__VA_ARGS__, "")
-#define CA_MSG_(expression, message, ...) message
-
 #ifdef __GNUC__
 
 // This library relies on the GCC/Clang function 'error' attribute.
@@ -64,87 +49,57 @@
 #ifdef GCC_COMPILE_ASSERT
 
 /**
- * @brief Statement to stop compilation with an error message if a compile_assert condition is not satisfied.
+ * @brief Statement to issue a diagnostic for a compilation with a message if a compile_assert condition is not satisfied.
  * There is no implementation as it is only used to stop the compiler.
  * @see compile_assert
  */
 
 // The failure function carries the error message via the error attribute.
 // Its name is made unique per expansion with __COUNTER__
-#define CA_CAT2(a, b) a##b
-#define CA_CAT(a, b) CA_CAT2(a, b)
+#define compile_assert_cat_(a, b) a##b
+#define compile_assert_cat(a, b)  compile_assert_cat_(a, b)
+
+#define compile_assert_impl(expression, message, n) \
+    do { \
+        [[noreturn]] void compile_assert_cat(_compile_assert_, n)(void) \
+            __attribute__((warning(message))); \
+        if (!(expression)) { \
+            compile_assert_cat(_compile_assert_, n)(); \
+        } \
+    } while (0)
+
+
+#define FILE_LINE __FILE__ ":" CA_STRINGIFY(__LINE__)
+
+#define CA_STRINGIFY_(x) #x
+#define CA_STRINGIFY(x) CA_STRINGIFY_(x)
 
 /**
  * @def compile_assert
  * @brief Macro for compile-time assertions.
  * @param expression The compile-time condition to be checked.
- * @param message Optional description of the assertion; defaults to "" when omitted.
+ * @param message A description of the assertion.
  */
-#define CA_ASSERT_IMPL(expression, message, fn) \
+#define compile_assert(expression, message) \
+    compile_assert_impl(expression, "compile_assert " FILE_LINE ": " message, __COUNTER__)
+
+#if 0
+#define compile_assert(expression, message) \
     do { \
-        [[noreturn]] void fn() __attribute__ ((error(message))); \
+        [[noreturn]] void _compile_assert() __attribute__ ((error(message))); \
         if (!(expression)) { \
-            fn(); \
+            _compile_assert(); \
         } \
     } while (0)
-#define compile_assert(...) \
-    CA_ASSERT_IMPL(CA_FIRST(__VA_ARGS__), CA_MSG(__VA_ARGS__), CA_CAT(_compile_assert_fail_, __COUNTER__))
-
-
-// compile_assert_const_p turns a provably-constant precondition violation into a build error.
-// The optional trailing arguments name the operands that must be compile-time constants for the
-// check to fire; with none given, the condition itself is the guarded operand:
-//
-//   compile_assert_const_p(condition, message)             guard on the condition
-//   compile_assert_const_p(condition, message, a)          guard on operand a
-//   compile_assert_const_p(condition, message, a, b, ...)  guard on every listed operand (ANDed)
-//
-// GCC before 13 does not fold __builtin_constant_p when it is applied to a value derived from
-// an overflow builtin, or even to a comparison in a deep constexpr call chain, so a guard on
-// the condition is missed and the assertion never fires. Naming the raw operands (plain
-// integers, which fold on every supported GCC) makes the check fire on GCC 11 and 12 as well
-//
-// __builtin_constant_p of every listed operand, ANDed together.
-// Up to 8 arguments are currently supported
-#define CA_G1(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G2(__VA_ARGS__))
-#define CA_G2(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G3(__VA_ARGS__))
-#define CA_G3(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G4(__VA_ARGS__))
-#define CA_G4(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G5(__VA_ARGS__))
-#define CA_G5(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G6(__VA_ARGS__))
-#define CA_G6(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G7(__VA_ARGS__))
-#define CA_G7(a, ...) __builtin_constant_p(a) __VA_OPT__(&& CA_G8(__VA_ARGS__))
-#define CA_G8(a) __builtin_constant_p(a)
-#define CA_GUARD(...) CA_G1(__VA_ARGS__)
-
-// Pick the guard expression
-#define CA_CONST_P_GUARD_(condition, ...)  __builtin_constant_p(condition)
-#define CA_CONST_P_GUARD_1(condition, ...) CA_GUARD(__VA_ARGS__)
-#define CA_CONST_P_GUARD(condition, ...) \
-    CA_CAT(CA_CONST_P_GUARD_, __VA_OPT__(1))(condition, __VA_ARGS__)
-
-#define CA_CONST_P_IMPL(condition, message, guard, fn) \
-    do { \
-        if (guard) { \
-            if (!(condition)) { \
-                [[noreturn]] void fn() __attribute__ ((error(message))); \
-                fn(); \
-            } \
-        } \
-    } while (0)
-#define compile_assert_const_p(condition, message, ...) \
-    CA_CONST_P_IMPL( \
-        condition, message, \
-        CA_CONST_P_GUARD(condition, __VA_ARGS__), \
-        CA_CAT(_compile_assert_fail_, __COUNTER__))
+#endif
 
 #else
-#define compile_assert(...)
-#define compile_assert_const_p(condition, message, ...)
+#define compile_assert(condition, description)
 #endif
 
 
 #ifdef GCC_COMPILE_ASSERT
-[[noreturn]]  void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error detected'")));
+[[noreturn]] void * _stop_compile2() __attribute__ ((error("'compile_assert pointer error detected'")));
 /**
  * @def compile_assert_never_null
  * @brief Macro to ensure a pointer is never NULL.
@@ -161,8 +116,7 @@
 #ifdef GCC_COMPILE_ASSERT
 /**
  * @def compile_assert_ptr
- * @brief Macro to check a condition and show the pointer, or stop the
- * compiler by calling the error function in optimized builds.
+ * @brief Macro to check a condition and show the pointer.
  * @param condition
  * @param ptr The pointer.
  * @return The pointer.
@@ -178,7 +132,7 @@
 [[noreturn]] int _stop_compile3() __attribute__ ((error("'compile_assert_scalar error detected'")));
 /**
  * @def compile_assert_scalar
- * @brief Macro to check a condition and substitute with the scalar in an optimized build.
+ * @brief Macro to check a condition and substitute with the scalar.
  * @param condition
  * @param scalar The value.
  * @return The scalar value.
@@ -189,18 +143,13 @@
 #define compile_assert_scalar(condition, scalar) scalar
 #endif
 
-// make lack of COMPILE_FILE a hard error
-//#if defined(_MSC_VER)
-//#ifndef COMPILE_FILE
-//#error MSVC compile_assert requires COMPILE_FILE to be passed from makefile
-//#endif // COMPILE_FILE
-//#endif // _MSC_VER
-
 #if defined(_MSC_VER)
 #ifndef COMPILE_FILE
-#define COMPILE_FILE filename_not_set
+#define COMPILE_FILE MSVC_requires_COMPILE_FILE
 #endif // COMPILE_FILE
+
 #endif // _MSC_VER
+
 
 #if defined(_MSC_VER)
 #if defined(__ENABLE_COMPILE_ASSERT__)
@@ -215,44 +164,32 @@
 #define MERGE1(a,b) MERGE2(a,b)
 #define MERGE3(a,b,c) MERGE1(a, MERGE1(b,c))
 
-// The non-active fallback above already defined this as empty
-#undef compile_assert
-#define compile_assert(...) \
+#define compile_assert(expr, message) \
 do { \
-    if (!(CA_FIRST(__VA_ARGS__))) { \
+    if (!(expr)) { \
       extern void MERGE3(_compile_assert, COMPILE_FILE, __LINE__)(); \
       MERGE3(_compile_assert, COMPILE_FILE, __LINE__)(); \
     } \
 } while (0)
+
 #else
 
-#define compile_assert(...)
+#define compile_assert(condition, description)
 #define COMPILE_ASSERT_ACTIVE
 
 #endif // defined(__ENABLE_COMPILE_ASSERT__)
 #endif // defined(_MSC_VER)
 
-// Generic compiler support, via a missing symbol
-#if defined(__ENABLE_COMPILE_ASSERT__)
-#if !defined(compile_assert)
-#define COMPILE_ASSERT_ACTIVE
-
-#define compile_assert(...) \
-    do { \
-        void _compile_assert_fail(); \
-        if (!(CA_FIRST(__VA_ARGS__))) { \
-            _compile_assert_fail(); \
-        } \
-    } while (0)
-#endif // !defined(compile_assert)
-#endif // defined(__ENABLE_COMPILE_ASSERT__)
+// Compile out the other variants for the moment
+#if defined(_MSC_VER)
+#define compile_assert_ptr(condition, ptr) ptr
+#define compile_assert_never_null(ptr) ptr
+#define compile_assert_scalar(condition, scalar) scalar
+#endif
 
 #ifndef compile_assert
 #error compile_assert not defined
 #endif
 
-#ifndef compile_assert_const_p
-#error compile_assert_const_p not defined
-#endif
 
 #endif // COMPILE_ASSERT_H

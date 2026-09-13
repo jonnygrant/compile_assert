@@ -3,6 +3,7 @@
 
 #include <string.h>
 
+/*
 #define compile_assert(expression, message) \
     do { \
         [[noreturn]] void _compile_assert_fail() __attribute__ ((error(message))); \
@@ -10,7 +11,7 @@
             _compile_assert_fail(); \
         } \
     } while (0)
-
+*/
 
 #if 0
 #define safe_strcpy(dest, src) \
@@ -25,13 +26,14 @@
 
 #define safe_strcpy(dest, src) \
     do { \
-        [[noreturn]] void _safe_strcpy_1() __attribute__ ((error("dest is invalid : " #dest))); \
+        void _safe_strcpy_err_1() __attribute__ ((warning("dest is invalid"))); \
         if (!(dest != NULL)) { \
-            _safe_strcpy_1(); \
+            _safe_strcpy_err_1(); \
         } \
-        [[noreturn]] void _safe_strcpy_2() __attribute__ ((error("src is invalid : " #src))); \
+          \
+        void _safe_strcpy_err_2() __attribute__ ((warning("src is invalid"))); \
         if (!(src != NULL)) { \
-            _safe_strcpy_2(); \
+            _safe_strcpy_err_2(); \
         } \
     } while (0)
 

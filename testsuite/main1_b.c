@@ -1,17 +1,17 @@
-// gcc -I.. -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -Wno-nonnull -o main1_b.bin main.c
+// gcc -I.. -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -Wno-nonnull -o main1_b.bin main1_b.c
 
 #include "compile_assert.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
+#define MY_STRINGIFY(x) #x
+#define MY_TOSTRING(x) MY_STRINGIFY(x)
 
 static void my_test(const char * p)
 {
-    compile_assert(p, "main1_a check not null in: " __FILE__ ":" TOSTRING(__LINE__));
+    compile_assert(p, "main1_a check not null in: " __FILE__ ":" MY_TOSTRING(__LINE__));
 
-    compile_assert(p[0] == 'H');
+    compile_assert(p[0] == 'H', "");
 
     printf("%s\n", p);
 }

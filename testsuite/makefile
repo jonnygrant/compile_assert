@@ -6,17 +6,18 @@
 # Stop make outputing the rules as it executes
 .SILENT:
 
-#CC = gcc
-CC = clang
+CC = gcc
+#CC = clang
 
-#CXX = g++
-CXX = clang++
+CXX = g++
+#CXX = clang++
 
 INC_DIRS := -I..
 #INC_DIRS :=
 
 # clang does not support -ftrack-macro-expansion=0
-FLAGS := $(INC_DIRS) -D__ENABLE_COMPILE_ASSERT__ -O2
+#clang uses  -fmacro-backtrace-limit=1
+FLAGS := $(INC_DIRS) -Wall -Werror -D__ENABLE_COMPILE_ASSERT__ -O2
 
 # Stop compiler outputting text, then only the return code is checked
 LOG := > /dev/null 2>&1
@@ -24,8 +25,9 @@ LOG := > /dev/null 2>&1
 
 #LOG := >> testsuite.log 2>&1
 
+# test_31_const_p_a test_31_const_p_b test_32_div_zero_a test_32_div_zero_b
 
-all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main17_a main17_b test_20_a main24_a main24_b main25_a main25_b main28_a main28_b main29_a main29_b test_30_web_a test_30_web_b test_31_const_p_a test_31_const_p_b test_32_div_zero_a test_32_div_zero_b
+all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main17_a main17_b test_20_a main24_a main24_b main25_a main25_b main28_a main28_b main29_a main29_b test_30_web_a test_30_web_b test_33_strcpy_a test_33_strcpy_b
 
 start:
 	echo "compile_assert() testsuite"
@@ -348,6 +350,24 @@ test_32_div_zero_b:
 		echo "test_32_div_zero_b: *FAIL*"; \
 	fi
 
+# should *not* compile
+test_33_strcpy_a:
+	$(CC) $(INC_DIRS) $(FLAGS) -Wno-div-by-zero -o test_33_strcpy_a.bin test_33_strcpy_a.c $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "test_33_strcpy_a: *FAIL*"; \
+	else \
+		echo "test_33_strcpy_a: PASS"; \
+	fi
+
+
+# should compile
+test_33_strcpy_b:
+	$(CC) $(INC_DIRS) $(FLAGS) -Wno-div-by-zero -o test_33_strcpy_b.bin test_33_strcpy_b.c $(LOG); \
+	if [ $$? -eq 0 ]; then \
+		echo "test_33_strcpy_b: PASS"; \
+	else \
+		echo "test_33_strcpy_b: *FAIL*"; \
+	fi
 
 clean:
 	rm -f *.bin

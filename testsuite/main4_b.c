@@ -1,4 +1,4 @@
-// gcc -O2 -o main4 main4_b.c
+// gcc -I.. -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -Wno-nonnull -o main4 main4_b.c
 // gcc 13  has a handy -Warray-bounds that catches too
 // demonstrate compile_assert checking all indices into an array are within bounds
 
@@ -20,5 +20,6 @@ int main()
         // will fire, as out of bounds
         compile_assert(i < buf_size, "check index");
         buf[i] = 3;
+		__builtin_printf("buf[%d]: %d\n", i, buf[i]);
     }
 }
