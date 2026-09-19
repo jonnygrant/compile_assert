@@ -3,14 +3,27 @@
 // demonstates implementing safe_strcpy() as a macro, so the checks are in the library
 // and the warning is in the user C code
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+
 #include "test_33_strcpy.h"
 
 int main(void)
 {
-    char dest[6];
-    char src[] = "hello";
+    char * dest = malloc(6);
+
+    if(NULL == dest)
+    {
+        perror("malloc");
+        return EXIT_FAILURE;
+    }
+
+    const char * src = "hello";
 
     safe_strcpy(dest, src);
+
+    free(dest);
 
     return 0;
 }

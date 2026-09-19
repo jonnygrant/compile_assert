@@ -26,18 +26,15 @@
 
 #define safe_strcpy(dest, src) \
     do { \
-        void _safe_strcpy_err_1() __attribute__ ((warning("dest is invalid"))); \
-        if (!(dest != NULL)) { \
-            _safe_strcpy_err_1(); \
+        void _safe_strcpy_diag_1() __attribute__ ((warning("Maybe dest is invalid"))); \
+        if (dest == NULL) { \
+            _safe_strcpy_diag_1(); \
         } \
           \
-        void _safe_strcpy_err_2() __attribute__ ((warning("src is invalid"))); \
-        if (!(src != NULL)) { \
-            _safe_strcpy_err_2(); \
+        void _safe_strcpy_diag_2() __attribute__ ((warning("Maybe src is invalid"))); \
+        if (src == NULL) { \
+            _safe_strcpy_diag_2(); \
         } \
     } while (0)
-
-
-
 
 #endif
