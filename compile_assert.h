@@ -72,13 +72,13 @@
         /* if known at compile time */ \
         if (__builtin_constant_p(expression)) { \
             void compile_assert_cat(_compile_assert_diag_, n)(void) \
-                __attribute__((warning("Invariant expr constraint not satisfied: " message))); \
+                __attribute__((warning("\ncompile_assert: Invariant expression constraint not satisfied: " message "\n"))); \
             if (!(expression)) { \
                 compile_assert_cat(_compile_assert_diag_, n)(); \
             } \
         } else { \
             void compile_assert_cat(_compile_assert_notproven_, n)(void) \
-                __attribute__((warning("Not proven expr: " message))); \
+                __attribute__((warning("\ncompile_assert: Expression not proven: " message "\n"))); \
             if (!(expression)) { \
                 compile_assert_cat(_compile_assert_notproven_, n)(); \
             } \
@@ -98,7 +98,7 @@
  * @param message A description of the assertion.
  */
 #define compile_assert(expression, message) \
-    compile_assert_impl(expression, "compile_assert " FILE_LINE ": " message, __COUNTER__)
+    compile_assert_impl(expression, FILE_LINE ": " message, __COUNTER__)
 
 #else
 #define compile_assert(condition, description)

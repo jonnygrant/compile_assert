@@ -14,7 +14,12 @@
 
 int main(int argc, char **argv)
 {
-	/* strlen(NULL) is undefined behaviour */
+    /* These checks also identify constraints not proven. Left out as not needed. */
+    //compile_assert(argc > 1, "argc");
+    //compile_assert(NULL != argv, "argv");
+
+    /* strlen(NULL) is undefined behaviour */
+
 	(void)strlen(argv[1]);
 	/* So the compiler may assume argv[1] is not NULL... */
 
