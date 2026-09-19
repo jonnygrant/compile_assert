@@ -67,18 +67,18 @@
    */
 
 /* If functions are [[noreturn]] only the first diagnostic is shown */
-#define compile_assert_impl(expression, message, n) \
+#define compile_assert_impl(expression, n, message, ...) \
     do { \
         /* if known at compile time */ \
         if (__builtin_constant_p(expression)) { \
             void compile_assert_cat(_compile_assert_diag_, n)(void) \
-                __attribute__((warning("\ncompile_assert: Invariant expression constraint not satisfied: " message "\n"))); \
+                __attribute__((warning("\ncompile_assert: Invariant expression constraint not satisfied: " FILE_LINE ": " message "\n"))); \
             if (!(expression)) { \
                 compile_assert_cat(_compile_assert_diag_, n)(); \
             } \
         } else { \
             void compile_assert_cat(_compile_assert_notproven_, n)(void) \
-                __attribute__((warning("\ncompile_assert: Expression not proven: " message "\n"))); \
+                __attribute__((warning("\ncompile_assert: Expression not proven: " FILE_LINE ": " message "\n"))); \
             if (!(expression)) { \
                 compile_assert_cat(_compile_assert_notproven_, n)(); \
             } \
@@ -97,8 +97,8 @@
  * @param expression The compile-time condition to be checked.
  * @param message A description of the assertion.
  */
-#define compile_assert(expression, message) \
-    compile_assert_impl(expression, FILE_LINE ": " message, __COUNTER__)
+#define compile_assert(expression, message...) \
+    compile_assert_impl(expression, __COUNTER__, ##message, CA_STRINGIFY(expression))
 
 #else
 #define compile_assert(condition, description)
