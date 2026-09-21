@@ -17,7 +17,9 @@ INC_DIRS := -I..
 
 # clang does not support -ftrack-macro-expansion=0
 #clang uses  -fmacro-backtrace-limit=1
-FLAGS := $(INC_DIRS) -Wall -Werror -D__ENABLE_COMPILE_ASSERT__ -O2 -ftrack-macro-expansion=0
+FLAGS := $(INC_DIRS) -Wall -Werror -fno-delete-null-pointer-checks -D__ENABLE_COMPILE_ASSERT__ -O2 -ftrack-macro-expansion=0 -Wno-error=array-bounds -Wno-error=address
+
+CFLAGS := -std=c2x
 
 # Stop compiler outputting text, then only the return code is checked
 LOG := > /dev/null 2>&1

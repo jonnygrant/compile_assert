@@ -1,8 +1,10 @@
 // gcc -I.. -D__ENABLE_COMPILE_ASSERT__ -O2 -Wall -Wno-nonnull -o main1_b.bin main1_b.c
 
-#include "compile_assert.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "compile_assert.h"
 
 #define MY_STRINGIFY(x) #x
 #define MY_TOSTRING(x) MY_STRINGIFY(x)

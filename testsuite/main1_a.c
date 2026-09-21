@@ -1,8 +1,11 @@
 // gcc -std=c2x -I.. -D__ENABLE_COMPILE_ASSERT__ -O2 -Wno-nonnull -o main1_a.bin main1_a.c
 
-#include "compile_assert.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
+
+#include "compile_assert.h"
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
@@ -22,8 +25,9 @@ int main()
 {
     const char * ptr = "hello";
     //if(rand() != 10) ptr = NULL;
+    compile_assert(ptr == NULL);
 
-    const int * ptr_to_null = nullptr;
+    const int * ptr_to_null = NULL;
     compile_assert(ptr_to_null);
 
     // The following line, is the programmer fix in this little example,

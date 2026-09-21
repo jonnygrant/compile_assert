@@ -14,5 +14,7 @@ int main()
         // will fire, as out of bounds
         compile_assert(i < buf_size, "check index");
         buf[i] = 3;
+
+        __builtin_printf("%c\n", buf[i]);
     }
 }
