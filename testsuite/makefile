@@ -29,7 +29,7 @@ LOG := > /dev/null 2>&1
 
 # test_31_const_p_a test_31_const_p_b test_32_div_zero_a test_32_div_zero_b
 
-all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main17_a main17_b test_20_a main24_a main24_b main25_a main25_b main28_a main28_b main29_a main29_b test_30_web_a test_30_web_b test_33_strcpy_a test_33_strcpy_b test_34_strlen_b
+all: start main1_a main1_b main2_a main2_b main3_a main3_b main4_a main4_b main5_a main5_b main6_a main6_b main17_a main17_b test_20_a main24_a main24_b main25_a main25_b main28_a main28_b main29_a main29_b test_30_web_a test_30_web_b test_33_strcpy_a test_33_strcpy_b test_34_strlen_a
 
 start:
 	@echo "compile_assert() testsuite"
@@ -374,12 +374,12 @@ test_33_strcpy_b:
 
 # should detect the issue
 # Relies upon -fno-delete-null-pointer-checks to avoid NULL checks being removed
-test_34_strlen_b:
-	$(CC) $(INC_DIRS) $(FLAGS) -fno-delete-null-pointer-checks -o test_34_strlen_b.bin test_34_strlen_b.c $(LOG); \
+test_34_strlen_a:
+	$(CC) $(INC_DIRS) $(FLAGS) -fno-delete-null-pointer-checks -o test_34_strlen_a.bin test_34_strlen_a.c $(LOG); \
 	if [ $$? -eq 0 ]; then \
-		echo "test_33_strcpy_b: *FAIL*"; \
+		echo "test_34_strlen_a: *FAIL*"; \
 	else \
-		echo "test_33_strcpy_b: PASS"; \
+		echo "test_34_strlen_a: PASS"; \
 	fi
 
 clean:
