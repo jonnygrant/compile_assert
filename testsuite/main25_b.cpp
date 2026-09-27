@@ -10,9 +10,9 @@
 
 #include "compile_assert.h"
 
-#define pre(expr) compile_assert(expr, "")
-#define contract_assert(expr) compile_assert(expr, "")
-#define post(expr) compile_assert(expr, "")
+#define pre(expr) compile_assert(expr, "Contract pre condition")
+#define contract_assert(expr) compile_assert(expr, "Command condition")
+#define post(expr) compile_assert(expr, "Contract post condition")
 
 
 static int divide(int a, int b)

@@ -1,7 +1,10 @@
 # Who needs Rust? compile_assert works with GCC and Clang today!
 Memory Safety @ Compile time! Not Runtime
 
-This works in standard GCC and Clang, no changes needed.
+This works in standard GCC, Clang, MSVC, no changes needed.
+
+[Try it out on godbolt in C or C++] (https://flux.godbolt.org/z/W5f8doaso)
+
 
 I always love the high performance nature of C and C++ programming, these languages have served me well in my career.
 With such a lot of existing code in C an and C++ out there, there are a lot of bugs and memory vulnerabilities that haven't been discovered. Currently there are mostly only *runtime* checks for these bugs, which means we need to soak test, and core dump at runtime before anyone will know the bug exists.  I wanted something different, something better, something at *compile time*
