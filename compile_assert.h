@@ -16,26 +16,25 @@
  */
 
 /**
- * @brief Utilize GCC attribute warning to stop when conditions
+ * @brief Sample implementation
+ * Ideally this would be a compiler feature, for now there is a sample implementation
+ * that utilizes GCC attribute warning to diagnose when conditions
  * are not met. This is at build time, by the compiler, when it does redundant code
  * removal, aka dead code removal.
  *
- * Implemented in C, it can be used in C++ projects as well.
+ * C header, supports C and C++.
  *
- * @note compile_assert() is kept as a macro so GCC shows the line it's invoked as in
- * any asserts that fire. (If changed to inline, GCC shows the inline function code instead)
+ * @note compile_assert() is kept as a macro so the compiler can show the line number
+ * of any diagnostics.
  *
- * @note This only works in an Optimized build; in -O0 builds, it "compiles out".
+ * @note This sample only works effectively in an Optimized build; in -O0 builds, it "compiles out".
  *
- * @note Future work: The description isn't logged yet - never will be, just note
- * to the programmer to refer to when they look up the file and line number of the compiler
- * output.
  */
 
 #ifdef __GNUC__
 
-// This library relies on the GCC/Clang function 'warning' attribute.
-// GCC has always supported it, but Clang only supports it from version 14.
+/* This library relies on the GCC/Clang function 'warning' attribute.
+ GCC has always supported it, but Clang only supports it from version 14. */
 #if defined(__ENABLE_COMPILE_ASSERT__) && !(defined(__has_attribute) && __has_attribute(warning))
 #error "__ENABLE_COMPILE_ASSERT__ requires the 'warning' function attribute, available on GCC and on Clang 14 or later."
 #endif
@@ -48,14 +47,19 @@
 
 #ifdef GCC_COMPILE_ASSERT
 
+#define FILE_LINE __FILE__ ":" CA_STRINGIFY(__LINE__)
+
+#define CA_STRINGIFY_(x) #x
+#define CA_STRINGIFY(x) CA_STRINGIFY_(x)
+
 /**
  * @brief Statement to issue a diagnostic for a compilation with a message if a compile_assert condition is not satisfied.
  * There is no implementation as it is only used to stop the compiler.
  * @see compile_assert
  */
 
-// The failure function carries the warning message via the warning attribute.
-// Its name is made unique per expansion with __COUNTER__
+/* The failure function carries the warning message via the warning attribute.
+ * Its name is made unique per expansion with __COUNTER__ */
 #define compile_assert_cat_(a, b) a##b
 #define compile_assert_cat(a, b)  compile_assert_cat_(a, b)
 
@@ -66,30 +70,30 @@
    compile-time true, and expression true - No diagnostic
    */
 
-/* If functions are [[noreturn]] only the first diagnostic is shown */
+/* NB If functions are [[noreturn]] only the first diagnostic is shown */
+/* If reachable as both constant and non-constant, the diagnostic may appear twice */
 #define compile_assert_impl(expression, n, message, ...) \
-    do { \
-        /* if known at compile time */ \
-        if (__builtin_constant_p(expression)) { \
+    do \
+    { \
+        /* if known to be constant at compile time */ \
+        if (__builtin_constant_p(expression)) \
+        { \
             void compile_assert_cat(_compile_assert_diag_, n)(void) \
-                __attribute__((warning("\ncompile_assert: Invariant expression constraint not satisfied: " FILE_LINE ": " message "\n"))); \
-            if (!(expression)) { \
+                __attribute__((warning("\n" FILE_LINE " compile_assert: Invariant expression constraint not satisfied: "  message "\n"))); \
+            if (!(expression)) \
+            { \
                 compile_assert_cat(_compile_assert_diag_, n)(); \
             } \
         } else { \
             void compile_assert_cat(_compile_assert_notproven_, n)(void) \
-                __attribute__((warning("\ncompile_assert: Expression not proven: " FILE_LINE ": " message "\n"))); \
-            if (!(expression)) { \
+                __attribute__((warning("\n" FILE_LINE " compile_assert: Expression not proven: " message "\n"))); \
+            if (!(expression)) \
+            { \
                 compile_assert_cat(_compile_assert_notproven_, n)(); \
             } \
         } \
     } while (0)
 
-
-#define FILE_LINE __FILE__ ":" CA_STRINGIFY(__LINE__)
-
-#define CA_STRINGIFY_(x) #x
-#define CA_STRINGIFY(x) CA_STRINGIFY_(x)
 
 /**
  * @def compile_assert
