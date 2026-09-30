@@ -60,8 +60,8 @@
 
 /* The failure function carries the warning message via the warning attribute.
  * Its name is made unique per expansion with __COUNTER__ */
-#define compile_assert_cat_(a, b) a##b
-#define compile_assert_cat(a, b)  compile_assert_cat_(a, b)
+#define COMPILE_ASSERT_MERGE(a, b) a##b
+#define COMPILE_ASSERT_CAT(a, b)  COMPILE_ASSERT_MERGE(a, b)
 
 /* __builtin_constant_p returns 1 if known to a compile-time invariant
    It returns 0 if it is not known
@@ -78,18 +78,18 @@
         /* if known to be constant at compile time */ \
         if (__builtin_constant_p(expression)) \
         { \
-            void compile_assert_cat(_compile_assert_diag_, n)(void) \
+            void COMPILE_ASSERT_CAT(_compile_assert_diag_, n)(void) \
                 __attribute__((warning("\n" FILE_LINE " compile_assert: Invariant expression constraint not satisfied: "  message "\n"))); \
             if (!(expression)) \
             { \
-                compile_assert_cat(_compile_assert_diag_, n)(); \
+                COMPILE_ASSERT_CAT(_compile_assert_diag_, n)(); \
             } \
         } else { \
-            void compile_assert_cat(_compile_assert_notproven_, n)(void) \
+            void COMPILE_ASSERT_CAT(_compile_assert_notproven_, n)(void) \
                 __attribute__((warning("\n" FILE_LINE " compile_assert: Expression not proven: " message "\n"))); \
             if (!(expression)) \
             { \
-                compile_assert_cat(_compile_assert_notproven_, n)(); \
+                COMPILE_ASSERT_CAT(_compile_assert_notproven_, n)(); \
             } \
         } \
     } while (0)
